@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
   }
 
   const token = signJwt({ email: user.email, name: user.name, role: user.role }, { expiresIn: 60 * 60 * 24 });
-  return NextResponse.json({ token, user: { email: user.email, name: user.name, role: user.role } });
+  return NextResponse.json({ token });
 }
 
 export async function GET(request: NextRequest) {
