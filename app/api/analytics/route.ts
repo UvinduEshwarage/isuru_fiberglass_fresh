@@ -22,7 +22,7 @@ function requireAuth(request: NextRequest) {
 }
 
 // =========================
-// ML ANALYTICS (SAFE)
+// ML ANALYTICS
 // =========================
 async function fetchTrendAnalysis(records: MlTrendRecord[]) {
   try {
@@ -36,7 +36,9 @@ async function fetchTrendAnalysis(records: MlTrendRecord[]) {
       body: JSON.stringify({ records }),
     });
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      return null;
+    }
 
     return await response.json();
   } catch {
@@ -45,120 +47,127 @@ async function fetchTrendAnalysis(records: MlTrendRecord[]) {
 }
 
 // =========================
-// GET ANALYTICS
+// GET DASHBOARD
 // =========================
 export async function GET(request: NextRequest) {
   try {
-    // -------------------------
+    // ---------------------
     // AUTH
-    // -------------------------
+    // ---------------------
     try {
       requireAuth(request);
     } catch (error) {
       return NextResponse.json(
-        { success: false, error: (error as Error).message },
-        { status: 401 }
+        {
+          success: false,
+          error: (error as Error).message,
+        },
+        {
+          status: 401,
+        }
       );
     }
 
-    // -------------------------
+    // ---------------------
     // DB
-    // -------------------------
+    // ---------------------
     const db = await connectDB();
     await ensureInvoiceIndexes(db);
 
     const invoices = await invoiceCollection(db).find().toArray();
 
-    // =========================
+    // =====================
     // BASIC STATS
-    // =========================
+    // =====================
     const invoiceCount = invoices.length;
 
-    const totalRevenue = invoices.reduce((sum, inv: any) => {
-      return sum + (Number(inv.totalPrice) || 0);
-    }, 0);
+    // Avoid double counting monthly revenue
+    const uniqueMonthlyRevenue = new Map<string, number>();
+
+    invoices.forEach((inv: any) => {
+      const key = `${inv.Year}-${String(inv.Month).padStart(2, "0")}`;
+
+      if (!uniqueMonthlyRevenue.has(key)) {
+        uniqueMonthlyRevenue.set(
+          key,
+          Number(inv.MonthlyRevenue) || 0
+        );
+      }
+    });
+
+    const totalRevenue = [...uniqueMonthlyRevenue.values()].reduce(
+      (sum, value) => sum + value,
+      0
+    );
 
     const averageInvoice =
       invoiceCount > 0 ? totalRevenue / invoiceCount : 0;
 
-    // =========================
-    // ANALYTICS MAPS
-    // =========================
+    // =====================
+    // MONTHLY REVENUE
+    // =====================
     const monthlyRevenue: Record<string, number> = {};
-    const productRevenue: Record<string, number> = {};
-    const categoryRevenue: Record<string, number> = {};
 
-    // =========================
-    // PROCESS DATA
-    // =========================
     invoices.forEach((inv: any) => {
-      const date = inv.date ? new Date(inv.date) : new Date();
+      const monthKey = `${inv.Year}-${String(inv.Month).padStart(
+        2,
+        "0"
+      )}`;
 
-      const month = Number.isNaN(date.valueOf())
-        ? "Unknown"
-        : date.toISOString().slice(0, 7);
-
-      const revenue = Number(inv.totalPrice) || 0;
-
-      // -------------------------
-      // MONTHLY
-      // -------------------------
-      monthlyRevenue[month] =
-        (monthlyRevenue[month] || 0) + revenue;
-
-      // -------------------------
-      // PRODUCT
-      // -------------------------
-      const product = inv.productName || "Unknown Product";
-
-      productRevenue[product] =
-        (productRevenue[product] || 0) + revenue;
-
-      // -------------------------
-      // CATEGORY
-      // -------------------------
-      const category = inv.category || "Unknown Category";
-
-      categoryRevenue[category] =
-        (categoryRevenue[category] || 0) + revenue;
+      monthlyRevenue[monthKey] =
+        Number(inv.MonthlyRevenue) || 0;
     });
 
-    // =========================
-    // TOP PRODUCTS
-    // =========================
+    // =====================
+    // PRODUCT REVENUE
+    // =====================
+    const productRevenue: Record<string, number> = {};
+
+    invoices.forEach((inv: any) => {
+      const category = inv.ProductCategory;
+
+      productRevenue[category] =
+        (productRevenue[category] || 0) +
+        (Number(inv.Quantity) || 0);
+    });
+
     const topProducts = Object.entries(productRevenue)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
-      .map(([product, revenue]) => ({
+      .map(([product, quantity]) => ({
         product,
-        revenue,
+        quantity,
       }));
 
-    // =========================
-    // TOP CATEGORIES
-    // =========================
-    const topCategories = Object.entries(categoryRevenue)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
-      .map(([category, revenue]) => ({
-        category,
-        revenue,
-      }));
+    // =====================
+    // QUARTER REVENUE
+    // =====================
+    const quarterRevenue: Record<string, number> = {};
 
-    // =========================
-    // RECENT INVOICES
-    // =========================
-    const recentInvoices = invoices
-      .sort(
-        (a: any, b: any) =>
-          new Date(b.date).getTime() -
-          new Date(a.date).getTime()
-      )
+    invoices.forEach((inv: any) => {
+      const quarter = inv.Quarter;
+
+      quarterRevenue[quarter] =
+        (quarterRevenue[quarter] || 0) +
+        (Number(inv.MonthlyRevenue) || 0);
+    });
+
+    // =====================
+    // RECENT RECORDS
+    // =====================
+    const recentInvoices = [...invoices]
+      .sort((a: any, b: any) => {
+        if (a.Year !== b.Year) {
+          return b.Year - a.Year;
+        }
+
+        return b.Month - a.Month;
+      })
       .slice(0, 5);
 
-    // =========================
-    // ML TREND DATA
-    // =========================
+    // =====================
+    // ML DATA
+    // =====================
     const records: MlTrendRecord[] = Object.entries(
       monthlyRevenue
     ).map(([month, revenue]) => ({
@@ -171,9 +180,9 @@ export async function GET(request: NextRequest) {
         ? await fetchTrendAnalysis(records)
         : null;
 
-    // =========================
+    // =====================
     // RESPONSE
-    // =========================
+    // =====================
     return NextResponse.json({
       success: true,
 
@@ -187,7 +196,7 @@ export async function GET(request: NextRequest) {
 
       topProducts,
 
-      topCategories,
+      quarterRevenue,
 
       recentInvoices,
 
@@ -201,7 +210,9 @@ export async function GET(request: NextRequest) {
         success: false,
         error: "Internal Server Error",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }

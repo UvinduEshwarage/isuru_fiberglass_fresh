@@ -1,21 +1,20 @@
 import { MongoClient, Db } from "mongodb";
 
-const uri = process.env.MONGODB_URL!;
-const dbName = process.env.MONGODB_DB!;
-
-if (!uri) {
-  throw new Error("Please define MONGODB_URI in .env");
-}
-
-if (!dbName) {
-  throw new Error("Please define MONGODB_DB in .env");
-}
-
-
-let client: MongoClient;
-let db: Db;
+let client: MongoClient | undefined;
+let db: Db | undefined;
 
 export async function connectDB(): Promise<Db> {
+  const uri = process.env.MONGODB_URL || process.env.MONGODB_URI;
+  const dbName = process.env.MONGODB_DB || process.env.MONGODB_NAME;
+
+  if (!uri) {
+    throw new Error("Please define MONGODB_URL (or MONGODB_URI) in environment");
+  }
+
+  if (!dbName) {
+    throw new Error("Please define MONGODB_DB (or MONGODB_NAME) in environment");
+  }
+
   if (db) {
     console.log("mongodb connected (reusing existing connection)");
     return db;

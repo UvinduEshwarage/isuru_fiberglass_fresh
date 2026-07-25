@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "../../../lib/mongodb";
 import { verifyJwt } from "../../../lib/auth";
-import { ensureInvoiceIndexes, invoiceCollection, InvoiceDocument } from "../../../lib/invoiceModel";
+// import { ensureInvoiceIndexes, invoiceCollection, InvoiceDocument } from "../../../lib/invoiceModel";
+import {
+  ensureNewInvoiceIndexes,
+  newInvoiceCollection,
+  NewInvoiceDocument
+} from "../../../lib/newInvoiceModel";
 
 function requireAuth(request: NextRequest) {
   const authHeader = request.headers.get("authorization") || "";
@@ -20,10 +25,10 @@ export async function GET(request: NextRequest) {
   }
 
   const db = await connectDB();
-  await ensureInvoiceIndexes(db);
-  const invoices = await invoiceCollection(db).find().sort({ createdAt: -1 }).toArray();
+  await ensureNewInvoiceIndexes(db);
+  const invoices = await newInvoiceCollection(db).find().sort({ createdAt: -1 }).toArray();
 
-  const totalRevenue = invoices.reduce((sum, invoice) => sum + (Number(invoice.total) || 0), 0);
+  const totalRevenue = invoices.reduce((sum, invoice) => sum + (Number(invoice.totalPrice) || 0), 0);
   const invoiceCount = invoices.length;
 
   const monthlyRevenue: Record<string, number> = {};
@@ -31,7 +36,7 @@ export async function GET(request: NextRequest) {
     const date = new Date(invoice.date || invoice.createdAt);
     if (Number.isNaN(date.valueOf())) return;
     const month = date.toISOString().slice(0, 7);
-    monthlyRevenue[month] = (monthlyRevenue[month] || 0) + (Number(invoice.total) || 0);
+    monthlyRevenue[month] = (monthlyRevenue[month] || 0) + (Number(invoice.totalPrice) || 0);
   });
 
   return NextResponse.json({
@@ -72,14 +77,14 @@ export async function POST(request: NextRequest) {
   const invoice = {
     customerName,
     items,
-    total: invoiceTotal,
+    totalPrice: invoiceTotal,
     date: date.toISOString(),
     createdAt: new Date().toISOString(),
   };
 
   const db = await connectDB();
-  await ensureInvoiceIndexes(db);
-  const result = await invoiceCollection(db).insertOne(invoice);
+  await ensureNewInvoiceIndexes(db);
+  const result = await newInvoiceCollection(db).insertOne(invoice);
 
   return NextResponse.json(
     { invoice: { ...invoice, _id: result.insertedId.toString() } },
