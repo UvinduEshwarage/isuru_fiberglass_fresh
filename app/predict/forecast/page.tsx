@@ -17,26 +17,6 @@ const monthOptions = [
   { value: 12, label: "December" },
 ];
 
-const productCategories = [
-  "Tables and Benches",
-  "Flower Pots",
-  "Temple Items",
-  "Garden Animal Moulds",
-  "Chemical Proof Tanks",
-  "Slab Moulds",
-  "Kanu Moulds",
-  "Beeralu Moulds",
-  "Molding Pati",
-  "Kalugal Moulds",
-  "Silparan Kota",
-  "Loover",
-  "Roofing Sheets",
-  "Bathik Tanks",
-  "Water Proof Tanks",
-  "Interlock",
-  "Doors",
-];
-
 const currentYear = new Date().getFullYear();
 const yearOptions = Array.from({ length: 6 }, (_, i) => currentYear + i);
 
@@ -47,6 +27,19 @@ function getQuarter(month: number) {
   return "Q4";
 }
 
+// Sinhala & Tamil New Year falls in mid-April, a known demand spike period.
+// Adjust this if your training data defines "New Year" differently (e.g. a wider Mar-Apr window).
+function detectIsNewYear(month: number) {
+  return month === 4;
+}
+
+// Basic heuristic to auto-detect seasonality from the month alone (no product
+// category input on this page anymore, since the current model doesn't use one).
+// Pre-New-Year run-up (Mar-Apr) and the Sep-Dec festive/year-end period are treated as seasonal.
+function detectIsSeasonal(month: number) {
+  return [3, 4, 9, 10, 11, 12].includes(month);
+}
+
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-LK", {
     style: "currency",
@@ -55,18 +48,26 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
+type ForecastRequestData = {
+  Year: number;
+  Month: number;
+  Quarter: string;
+  MonthName: string;
+  IsQ1: boolean;
+  IsNewYear: boolean;
+  IsSeasonal: boolean;
+};
+
 type PredictionHistoryItem = {
   id: string;
   createdAt: string;
-  requestData: Record<string, string | number | boolean>;
+  requestData: ForecastRequestData;
   predictedRevenue: number;
 };
 
 export default function ForecastPage() {
   const [year, setYear] = useState(2026);
   const [month, setMonth] = useState(1);
-  const [productCategory, setProductCategory] = useState("Tables and Benches");
-  const [quantity, setQuantity] = useState(10);
   const [isSeasonal, setIsSeasonal] = useState(false);
   const [seasonOverride, setSeasonOverride] = useState(false);
   const [showPayload, setShowPayload] = useState(false);
@@ -75,43 +76,33 @@ export default function ForecastPage() {
   const [error, setError] = useState("");
   const [history, setHistory] = useState<PredictionHistoryItem[]>([]);
 
-  const requestData = useMemo(
+  const quarter = useMemo(() => getQuarter(month), [month]);
+  const monthName = useMemo(
+    () => monthOptions.find((item) => item.value === month)?.label || "January",
+    [month]
+  );
+  const isQ1 = quarter === "Q1";
+  const isNewYear = detectIsNewYear(month);
+
+  const requestData: ForecastRequestData = useMemo(
     () => ({
       Year: year,
       Month: month,
-      Quarter: getQuarter(month),
-      MonthName: monthOptions.find((item) => item.value === month)?.label || "January",
-      ProductCategory: productCategory,
-      Quantity: quantity,
+      Quarter: quarter,
+      MonthName: monthName,
+      IsQ1: isQ1,
+      IsNewYear: isNewYear,
       IsSeasonal: isSeasonal,
     }),
-    [year, month, productCategory, quantity, isSeasonal]
+    [year, month, quarter, monthName, isQ1, isNewYear, isSeasonal]
   );
 
-  // Basic heuristic to auto-detect seasonality from category or month.
-  function detectSeasonality(cat: string, m: number) {
-    const seasonalCategories = new Set([
-      "Flower Pots",
-      "Garden Animal Moulds",
-      "Temple Items",
-      "Bathik Tanks",
-      "Seasonal",
-    ]);
-
-    if (seasonalCategories.has(cat)) return true;
-
-    // Example: months with higher seasonal demand (Mar-May and Sep-Nov)
-    if ([3, 4, 5, 9, 10, 11].includes(m)) return true;
-
-    return false;
-  }
-
-  // Keep isSeasonal synced automatically unless user overrides it
+  // Keep isSeasonal synced automatically unless the user overrides it
   useEffect(() => {
     if (!seasonOverride) {
-      setIsSeasonal(detectSeasonality(productCategory, month));
+      setIsSeasonal(detectIsSeasonal(month));
     }
-  }, [productCategory, month, seasonOverride]);
+  }, [month, seasonOverride]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -158,8 +149,8 @@ export default function ForecastPage() {
         throw new Error(payload.error || payload.detail || "Prediction failed");
       }
 
-      setPredictedRevenue(payload.predicted_revenue);
-      savePrediction(payload.predicted_revenue);
+      setPredictedRevenue(payload.predicted_monthly_revenue);
+      savePrediction(payload.predicted_monthly_revenue);
     } catch (err: any) {
       setError(err.message || "Unexpected error");
     } finally {
@@ -181,7 +172,7 @@ export default function ForecastPage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-slate-800">Input features</h2>
             <p className="mt-2 text-sm text-slate-500">
-              The prediction model uses year, month, quarter, product category, quantity, and seasonality.
+              The prediction model uses year, month, quarter, Q1 flag, New Year flag, and seasonality.
             </p>
           </div>
         </div>
@@ -218,38 +209,12 @@ export default function ForecastPage() {
                   ))}
                 </select>
               </label>
-
-              <label className="space-y-2">
-                <span className="text-sm font-medium text-slate-700">Product Category</span>
-                <select
-                  value={productCategory}
-                  onChange={(event) => setProductCategory(event.target.value)}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-slate-400"
-                >
-                  {productCategories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="space-y-2">
-                <span className="text-sm font-medium text-slate-700">Quantity</span>
-                <input
-                  type="number"
-                  min={1}
-                  value={quantity}
-                  onChange={(event) => setQuantity(Number(event.target.value))}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-slate-400"
-                />
-              </label>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-medium text-slate-700">Seasonality</p>
-                <p className="text-sm text-slate-500">Auto-detected from category/month. Override if needed.</p>
+                <p className="text-sm text-slate-500">Auto-detected from month. Override if needed.</p>
               </div>
 
               <div className="flex items-center gap-3">
@@ -284,6 +249,12 @@ export default function ForecastPage() {
                 </div>
                 <div>
                   <span className="font-medium">Month Name:</span> {requestData.MonthName}
+                </div>
+                <div>
+                  <span className="font-medium">Is Q1:</span> {requestData.IsQ1 ? "Yes" : "No"}
+                </div>
+                <div>
+                  <span className="font-medium">Is New Year:</span> {requestData.IsNewYear ? "Yes" : "No"}
                 </div>
               </div>
             </div>
@@ -325,7 +296,7 @@ export default function ForecastPage() {
 
               {showPayload && (
                 <pre className="mt-3 overflow-x-auto text-sm text-slate-800">
-                  {JSON.stringify(requestData, null, 2)}
+                  {JSON.stringify({ data: requestData }, null, 2)}
                 </pre>
               )}
             </div>

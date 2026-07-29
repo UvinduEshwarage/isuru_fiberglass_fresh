@@ -3,6 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ChevronRight } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../components/ui/alert-dialog";
 import {
   Home,
   BarChart2,
@@ -28,6 +40,7 @@ type NavItem = {
   icon?: any;
   children?: NavItem[];
 };
+
 
 const nav: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
@@ -66,21 +79,22 @@ const nav: NavItem[] = [
   },
   {
     label: "Market Basket Analysis",
+    href: "/mba",
     icon: ShoppingCart,
     children: [
       { label: "Frequently Bought Together", href: "/mba/frequently-bought", icon: ShoppingCart },
       { label: "Product Recommendations", href: "/mba/recommendations", icon: Layers },
     ],
   },
-  {
-    label: "Reports",
-    icon: FileText,
-    children: [
-      { label: "Daily Sales Report", href: "/reports/daily", icon: Calendar },
-      { label: "Monthly Revenue Report", href: "/reports/monthly", icon: PieChart },
-      { label: "Product Performance Report", href: "/reports/product-performance", icon: BarChart2 },
-    ],
-  },
+  // {
+  //   label: "Reports",
+  //   icon: FileText,
+  //   children: [
+  //     { label: "Daily Sales Report", href: "/reports/daily", icon: Calendar },
+  //     { label: "Monthly Revenue Report", href: "/reports/monthly", icon: PieChart },
+  //     { label: "Product Performance Report", href: "/reports/product-performance", icon: BarChart2 },
+  //   ],
+  // },
   {
     label: "Settings",
     icon: Settings,
@@ -90,6 +104,7 @@ const nav: NavItem[] = [
     ],
   },
 ];
+
 
 function Item({ item, depth = 0 }: { item: NavItem; depth?: number }) {
   const pathname = usePathname() || "/";
@@ -107,16 +122,21 @@ function Item({ item, depth = 0 }: { item: NavItem; depth?: number }) {
     }
   }, [childActive, hasChildren]);
 
+  
+
   return (
     <div>
       <div
-        className={`flex items-center justify-between gap-3 px-3 py-2 rounded-md cursor-pointer hover:bg-slate-100 ${
-          isActive ? "bg-slate-100 font-semibold" : ""
-        }`}
+        className={`flex items-center justify-between gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors
+  ${
+    isActive
+      ? "bg-slate-700 text-white font-semibold"
+      : "text-slate-300 hover:bg-slate-800 hover:text-white"
+  }`}
         onClick={() => hasChildren && setOpen((s) => !s)}
       >
         <div className="flex items-center gap-3">
-          {Icon && <Icon className="w-4 h-4 text-slate-600" />}
+          {Icon && <Icon className={`w-4 h-4 ${isActive ? "text-blue-600" : "text-blue-500"}`} />}
 
           {item.href ? (
             <Link href={item.href} className="text-sm">
@@ -128,14 +148,11 @@ function Item({ item, depth = 0 }: { item: NavItem; depth?: number }) {
         </div>
 
         {hasChildren && (
-          <svg
-            className={`w-3 h-3 transform transition-transform ${open ? "rotate-90" : ""}`}
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M6 4L14 10L6 16V4Z" fill="currentColor" />
-          </svg>
+          <ChevronRight
+  className={`w-4 h-4 transition-transform ${
+    open ? "rotate-90" : ""
+  }`}
+/>
         )}
       </div>
 
@@ -153,25 +170,50 @@ function Item({ item, depth = 0 }: { item: NavItem; depth?: number }) {
 export default function Sidebar({ className = "" }: { className?: string }) {
   const [collapsed, setCollapsed] = useState(false);
 
+  function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "/login";
+}
+
   return (
+    // <aside
+    //   className={`flex flex-col bg-linear-to-b from-white to-blue-50 border-r border-blue-100 min-h-full ${className}`}
+    //   aria-label="Sidebar"
+    // >
     <aside
-      className={`flex flex-col bg-white border-r min-h-full ${className}`}
-      aria-label="Sidebar"
-    >
-      <div className="flex items-center justify-between p-4 border-b">
+  className="fixed
+    top-0
+    left-0
+    h-screen
+    w-72
+    bg-slate-900
+    text-white
+    border-r
+    border-slate-800
+    flex
+    flex-col"
+>
+      {/* <div className="flex items-center justify-between p-4 border-b border-blue-100"> */}
+      <div className="flex items-center justify-between p-5 border-b border-slate-800">
         <div>
-          <h3 className="text-lg font-semibold">Isuru Fiberglass</h3>
-          <p className="text-xs text-slate-500">Business Analytics</p>
+          {/* <h3 className="text-lg font-semibold text-blue-900">Isuru Fiberglass</h3> */}
+          <h3 className="text-lg font-bold text-white">
+    Isuru Fiberglass
+</h3>
+          {/* <p className="text-xs text-blue-500">Business Analytics</p> */}
+          <p className="text-xs text-slate-400">
+    POS & Business Analytics
+</p>
         </div>
 
         <div>
           <button
             onClick={() => setCollapsed((s) => !s)}
-            className="p-2 rounded bg-slate-100 hover:bg-slate-200"
+            className="p-2 rounded bg-blue-50 hover:bg-blue-100"
             aria-expanded={!collapsed}
             aria-label="Toggle sidebar"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+            <svg className="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="none">
               <path d="M4 6H20M4 12H20M4 18H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </button>
@@ -188,20 +230,47 @@ export default function Sidebar({ className = "" }: { className?: string }) {
         ) : (
           <div className="flex flex-col gap-2 items-center">
             {nav.map((n) => (
-              <Link key={n.label} href={n.href || "#"} className="p-2 rounded hover:bg-slate-100">
-                {n.icon && <n.icon className="w-5 h-5 text-slate-600" />}
+              <Link key={n.label} href={n.href || "#"} className="p-2 rounded hover:bg-blue-50">
+                {n.icon && <n.icon className="w-5 h-5 text-blue-600" />}
               </Link>
             ))}
           </div>
         )}
       </div>
+          <AlertDialog>
+ <AlertDialogTrigger
+  className="mx-4 mb-4 flex w-[calc(100%-2rem)] items-center justify-center gap-2 rounded-xl bg-linear-to-r from-red-600 to-red-500 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:from-red-700 hover:to-red-600"
+>
+  Logout
+</AlertDialogTrigger>
 
-      <div className="p-4 border-t">
-        <Link href="/settings/profile" className="flex items-center gap-3">
-          <User className="w-5 h-5 text-slate-600" />
-          <div className="text-sm">Profile</div>
-        </Link>
-      </div>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>
+        Confirm Logout
+      </AlertDialogTitle>
+
+      <AlertDialogDescription>
+        Are you sure you want to log out of the POS system?
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+
+    <AlertDialogFooter>
+      <AlertDialogCancel>
+        Cancel
+      </AlertDialogCancel>
+
+      <AlertDialogAction
+        onClick={logout}
+        className="bg-red-600 hover:bg-red-700"
+      >
+        Logout
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
     </aside>
-  );
+  )
 }
+
+

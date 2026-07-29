@@ -8,22 +8,20 @@ export const metadata: Metadata = {
 
 export default function DashboardLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="min-h-screen text-slate-800 bg-slate-50">
-      <div className="flex">
-        <div className="hidden md:block w-72">
-          <Sidebar />
-        </div>
+    <div className="min-h-screen bg-slate-50 flex">
+      <Sidebar />
 
-        <div className="flex-1 min-h-screen">
-          <div className="p-4 md:p-6">
-            <Topbar />
-
-            <div className="mt-6">{children}</div>
-          </div>
+      <main className="ml-72 min-h-screen">
+        <div className="p-4 md:p-6">
+          <Topbar />
+          <div className="mt-6">{children}</div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
+

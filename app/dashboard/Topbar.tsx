@@ -109,38 +109,62 @@ export default function Topbar() {
   })();
 
   return (
-    <header className="flex items-center justify-between bg-white p-4 rounded shadow-sm">
-      <div>
-        <h1 className="text-lg font-semibold">{title}</h1>
-        <p className="text-sm text-slate-500">Overview and insights</p>
+  <header className="flex items-center justify-between rounded-xl bg-white px-4 py-4 shadow-sm border border-slate-500">
+    {/* Left */}
+    <div>
+      <p className="text-sm text-slate-500">
+        Point of Sale System
+      </p>
+
+      <h1 className="mt-1 text-2xl font-bold text-slate-800">
+        {title}
+      </h1>
+    </div>
+
+    {/* Right */}
+    <div className="flex items-center gap-5">
+      {/* Date */}
+      <div className="hidden lg:block text-right">
+        <p className="text-sm font-medium text-slate-800">
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </p>
+
+        <p className="text-xs text-slate-500">
+          Welcome back 👋
+        </p>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Link
-          href="/settings/profile"
-          className="flex items-center gap-2"
-        >
-          
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 bg-white flex items-center justify-center">
-           <Image
-              src="/favicon.ico"
-               alt="Business Logo"
-                 width={32}
-                 height={32}
-               className="object-contain"
-                />
-          </div>
-          <div className="hidden sm:block text-sm">
-            <div className="font-medium">
-              {profile.name}
-            </div>
+      {/* Profile */}
+      <Link
+        href="/settings/profile"
+        className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 transition hover:bg-slate-100"
+      >
+        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-blue-600">
+          <Image
+            src="/favicon.ico"
+            alt="Business Logo"
+            width={26}
+            height={26}
+            className="object-contain"
+          />
+        </div>
 
-            <div className="text-xs text-slate-500">
-              {profile.email}
-            </div>
-          </div>
-        </Link>
-      </div>
-    </header>
-  );
+        <div className="hidden sm:block">
+          <p className="text-sm font-semibold text-slate-800">
+            {profile.name}
+          </p>
+
+          <p className="text-xs text-slate-500">
+            {profile.email}
+          </p>
+        </div>
+      </Link>
+    </div>
+  </header>
+);
 }

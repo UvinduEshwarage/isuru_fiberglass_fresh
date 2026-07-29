@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import RecommendationPanel from "../../components/RecommendationPanel";
+import TopRecommendation from "../components/TopRecommendation";
+import RecommendationCard from "../components/RecommendationCard";
 
 const productCategories = [
   "Tables and Benches",
@@ -141,7 +143,60 @@ export default function RecommendationsPage() {
           </aside>
         </div>
 
-        <RecommendationPanel recommendations={recommendations} rules={rules} loading={loading} error={error} />
+        <div className="space-y-6">
+  {recommendations.length > 0 && (
+    <TopRecommendation
+      product={recommendations[0]}
+    />
+  )}
+
+  {recommendations.length > 0 && (
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {recommendations.map((product, index) => (
+        <RecommendationCard
+          key={index}
+          product={product}
+        />
+      ))}
+    </div>
+  )}
+
+  {rules.length > 0 && (
+    <div className="rounded-3xl bg-white p-6 shadow-sm">
+      <h2 className="mb-4 text-xl font-bold">
+        Matching Association Rules
+      </h2>
+
+      <div className="space-y-4">
+        {rules.map((rule, index) => (
+          <div
+            key={index}
+            className="rounded-2xl border border-slate-200 p-4"
+          >
+            <div className="font-medium">
+              {rule.antecedents.join(", ")} →{" "}
+              {rule.consequents.join(", ")}
+            </div>
+
+            <div className="mt-2 flex gap-4 text-sm text-slate-500">
+              <span>
+                Support: {rule.support.toFixed(3)}
+              </span>
+
+              <span>
+                Confidence: {rule.confidence.toFixed(3)}
+              </span>
+
+              <span>
+                Lift: {rule.lift.toFixed(2)}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
       </div>
     </div>
   );

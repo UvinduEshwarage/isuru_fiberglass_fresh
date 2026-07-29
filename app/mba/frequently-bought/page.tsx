@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import EmptyState from "../components/EmptyState";
+import RuleCard from "../components/RuleCard";
+import LoadingSkeleton from "../components/LoadingSkeleton";
 
 type AssociationRule = {
   antecedents: string[];
@@ -51,46 +54,6 @@ export default function FrequentlyBoughtPage() {
     })
     .sort((a, b) => (b as any)[sortKey] - (a as any)[sortKey]);
 
-  function MetricBadge({ label, value }: { label: string; value: number }) {
-    return (
-      <div className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700">
-        <span className="opacity-70">{label}</span>
-        <span>{typeof value === 'number' ? value.toFixed(label === 'Lift' ? 2 : 3) : value}</span>
-      </div>
-    );
-  }
-
-  function RuleCard({ rule }: { rule: AssociationRule }) {
-    return (
-      <div className="rounded-2xl bg-white p-5 shadow-sm hover:shadow-md transition">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <div className="flex flex-wrap gap-2">
-              {rule.antecedents.map((a) => (
-                <div key={a} className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-800">{a}</div>
-              ))}
-
-              <div className="mx-2 text-slate-400">→</div>
-
-              {rule.consequents.map((c) => (
-                <div key={c} className="rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-800 border border-emerald-100">{c}</div>
-              ))}
-            </div>
-
-            <div className="mt-4 text-sm text-slate-600">
-              <div><span className="font-semibold text-slate-800">Example pairing:</span> {rule.antecedents.join(', ')} → {rule.consequents.join(', ')}</div>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-end gap-2">
-            <MetricBadge label="Support" value={rule.support} />
-            <MetricBadge label="Confidence" value={rule.confidence} />
-            <MetricBadge label="Lift" value={rule.lift} />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-slate-100 p-6">
@@ -130,15 +93,23 @@ export default function FrequentlyBoughtPage() {
             </div>
           </div>
 
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {loading ? (
-              <div className="col-span-full rounded-2xl border border-slate-100 bg-slate-50 p-6 text-slate-600">Loading frequently bought products...</div>
-            ) : (
-              filtered.map((rule, index) => (
-                <RuleCard key={index} rule={rule} />
-              ))
-            )}
-          </div>
+          <div className="mt-6">
+  {loading ? (
+  <LoadingSkeleton />
+)
+   : filtered.length === 0 ? (
+    <EmptyState
+      title="No Matching Rules Found"
+      description="Try searching for a different product or change the selected sorting option."
+    />
+  ) : (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {filtered.map((rule, index) => (
+        <RuleCard key={index} rule={rule} />
+      ))}
+    </div>
+  )}
+</div>
         </div>
       </div>
     </div>

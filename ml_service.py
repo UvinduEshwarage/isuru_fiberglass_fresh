@@ -16,8 +16,9 @@ print("======================================")
 
 BASE_DIR = Path(__file__).resolve().parent
 
-MODEL_PATH = BASE_DIR / "ML" / "linear_regression_model.pkl"
+#MODEL_PATH = BASE_DIR / "ML" / "linear_regression_model.pkl"
 RULES_PATH = BASE_DIR / "ML" / "association_rules.csv"
+MODEL_PATH = BASE_DIR / "ML" / "linear_forecasting_model.pkl"
 
 # ==========================================================
 # FastAPI App
@@ -69,8 +70,16 @@ def get_model():
 # Request Models
 # ==========================================================
 
-class PredictionRequest(BaseModel):
-    data: dict
+#class PredictionRequest(BaseModel):
+    #data: dict
+class ForecastRequest(BaseModel):
+    Year: int
+    Month: int
+    Quarter: str
+    MonthName: str
+    IsQ1: int
+    IsNewYear: int
+    IsSeasonal: int
 
 
 class RecommendRequest(BaseModel):
@@ -106,16 +115,44 @@ def root():
 # Revenue Prediction
 # ==========================================================
 
+# @app.post("/predict")
+# def predict(request: PredictionRequest):
+
+#     try:
+#         df = pd.DataFrame([request.data])
+
+#         prediction = get_model().predict(df)[0]
+
+#         return {
+#             "predicted_revenue": float(prediction)
+#         }
+
+#     except Exception as exc:
+#         raise HTTPException(
+#             status_code=500,
+#             detail=str(exc)
+#         )
+
+
 @app.post("/predict")
-def predict(request: PredictionRequest):
+def predict(request: ForecastRequest):
 
     try:
-        df = pd.DataFrame([request.data])
 
-        prediction = get_model().predict(df)[0]
+        input_df = pd.DataFrame([{
+            "Year": request.Year,
+            "Month": request.Month,
+            "Quarter": request.Quarter,
+            "MonthName": request.MonthName,
+            "IsQ1": request.IsQ1,
+            "IsNewYear": request.IsNewYear,
+            "IsSeasonal": request.IsSeasonal
+        }])
+
+        prediction = get_model().predict(input_df)[0]
 
         return {
-            "predicted_revenue": float(prediction)
+            "predicted_monthly_revenue": round(float(prediction), 2)
         }
 
     except Exception as exc:
@@ -124,11 +161,14 @@ def predict(request: PredictionRequest):
             detail=str(exc)
         )
 
+# @app.post("/revenue_prediction")
+# def revenue_prediction(request: PredictionRequest):
+#     return predict(request)
+
 
 @app.post("/revenue_prediction")
-def revenue_prediction(request: PredictionRequest):
+def revenue_prediction(request: ForecastRequest):
     return predict(request)
-
 
 # ==========================================================
 # Revenue Trends

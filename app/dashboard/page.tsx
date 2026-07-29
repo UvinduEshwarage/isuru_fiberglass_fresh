@@ -88,10 +88,6 @@ export default function DashboardPage() {
     }
   }
 
-  function logout() {
-    localStorage.removeItem("token");
-    router.push("/login");
-  }
 
   const formatCurrency = (value: number) => {
     // Use localized number formatting and prefix with 'Rs.' for Sri Lankan Rupee
@@ -141,18 +137,16 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold text-slate-800">
               Analytics Dashboard
             </h1>
+            
+            
+            
 
             <p className="text-slate-500">
               Revenue & Sales Overview
             </p>
           </div>
 
-          <button
-            onClick={logout}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg"
-          >
-            Logout
-          </button>
+          
         </div>
 
         {/* KPI CARDS */}
@@ -176,7 +170,6 @@ export default function DashboardPage() {
               {formatCurrency(dashboard.totalRevenue)}
             </h2>
           </div>
-
           <div className="bg-white rounded-xl shadow p-5">
             <p className="text-slate-500 text-sm">
               Total Quantity
@@ -258,6 +251,8 @@ export default function DashboardPage() {
 
         {/* RECENT RECORDS */}
         <RecentTransactionsTable records={dashboard.recentRecords} />
+
+
 
       </div>
     </div>
