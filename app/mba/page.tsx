@@ -144,14 +144,12 @@ export default function MarketBasketDashboard() {
       <section className="overflow-hidden rounded-3xl bg-linear-to-r from-slate-900 via-slate-800 to-slate-900 p-10 text-white shadow-lg">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-3xl text-slate-900">
-            <div className="inline-flex items-center rounded-full text-4xl font-bold  bg-white/10 px-4 py-2">
-              <BrainCircuit className="mr-2 h-4 w-4  " />
+            <div className="inline-flex items-center rounded-full text-4xl font-bold text-slate-300 bg-white/10 px-4 py-2">
+              <BrainCircuit className="mr-2 h-4 w-4 text-slate-300 " />
               Business Intelligence Module
             </div>
 
-            <h1 className="mt-6 text-4xl font-bold px-4 py-2">
-              Market Basket Analysis Dashboard
-            </h1>
+            
 
             <p className="mt-5 max-w-2xl text-slate-300 leading-7 px-4 py-2">
               Analyze customer purchasing behaviour using Association Rule
