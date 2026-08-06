@@ -2,17 +2,35 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+// interface Product {
+//   _id: string;
+//   productId: string;
+//   name: string;
+//   category: string;
+//   stock: number;
+//   price: number;
+//   active: boolean;
+//   createdAt: string;
+// }
 interface Product {
   _id: string;
+
   productId: string;
   name: string;
   category: string;
+  description?: string;
+
+  image?: {
+    url: string;
+    publicId: string;
+  };
+
   stock: number;
   price: number;
   active: boolean;
+
   createdAt: string;
 }
-
 interface ProductsResponse {
   products: Product[];
 }
@@ -99,17 +117,49 @@ export default function ProductInventoryPage() {
       <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
-            <tr>
+            {/* <tr>
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+  Image
+</th>
               <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Product ID</th>
               <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Name</th>
               <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Category</th>
               <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Stock</th>
               <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Price</th>
               <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-            </tr>
+            </tr> */}
+            <tr>
+  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+    Image
+  </th>
+
+  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+    Product ID
+  </th>
+
+  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+    Name
+  </th>
+
+  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+    Category
+  </th>
+
+  <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+    Stock
+  </th>
+
+  <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+    Price
+  </th>
+
+  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+    Status
+  </th>
+</tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">
-            {products.map((product) => (
+            {/* {products.map((product) => (
               <tr key={product._id} className="hover:bg-slate-50">
                 <td className="px-6 py-4 text-sm font-medium text-slate-900">{product.productId}</td>
                 <td className="px-6 py-4 text-sm text-slate-700">{product.name}</td>
@@ -120,7 +170,72 @@ export default function ProductInventoryPage() {
                 <td className="px-6 py-4 text-right text-sm font-semibold text-slate-900">{formatCurrency(product.price)}</td>
                 <td className="px-6 py-4 text-sm text-slate-700">{product.active ? "Active" : "Inactive"}</td>
               </tr>
-            ))}
+            ))} */}
+            {products.map((product) => (
+  <tr
+    key={product._id}
+    className="transition-colors hover:bg-slate-50"
+  >
+    {/* Product Image */}
+    <td className="px-6 py-4">
+      {product.image?.url ? (
+        <img
+          src={product.image.url}
+          alt={product.name}
+          className="h-14 w-14 rounded-xl border border-slate-200 object-cover"
+        />
+      ) : (
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100 text-[10px] text-slate-400">
+          No image
+        </div>
+      )}
+    </td>
+
+    {/* Product ID */}
+    <td className="px-6 py-4 text-sm font-medium text-slate-900">
+      {product.productId}
+    </td>
+
+    {/* Name */}
+    <td className="px-6 py-4 text-sm text-slate-700">
+      {product.name}
+    </td>
+
+    {/* Category */}
+    <td className="px-6 py-4 text-sm text-slate-700">
+      {product.category}
+    </td>
+
+    {/* Stock */}
+    <td
+      className={`px-6 py-4 text-right text-sm font-semibold ${
+        product.stock <= 5
+          ? "text-rose-600"
+          : "text-slate-900"
+      }`}
+    >
+      {product.stock}
+    </td>
+
+    {/* Price */}
+    <td className="px-6 py-4 text-right text-sm font-semibold text-slate-900">
+      {formatCurrency(product.price)}
+    </td>
+
+    {/* Status */}
+    <td className="px-6 py-4">
+      <span
+        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
+          product.active
+            ? "bg-emerald-50 text-emerald-700"
+            : "bg-slate-100 text-slate-600"
+        }`}
+      >
+        {product.active ? "Active" : "Inactive"}
+      </span>
+    </td>
+  </tr>
+))}
           </tbody>
         </table>
       </div>

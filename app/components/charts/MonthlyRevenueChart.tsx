@@ -97,7 +97,7 @@ export default function MonthlyRevenueChart({
 
         ticks: {
           callback: (value: any) =>
-            `$${Number(value).toLocaleString()}`,
+            `Rs. ${Number(value).toLocaleString()}`,
         },
       },
     },

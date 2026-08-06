@@ -3,7 +3,7 @@ import Sidebar from "../dashboard/Sidebar";
 import Topbar from "../dashboard/Topbar";
 
 export const metadata: Metadata = {
-  title: "Dashboard - Isuru Fiberglass",
+  title: "Product Recommendation - Isuru Fiberglass",
 };
 
 export default function DashboardLayout({

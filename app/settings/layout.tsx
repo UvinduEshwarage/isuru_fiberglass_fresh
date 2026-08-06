@@ -3,7 +3,7 @@ import Sidebar from "../dashboard/Sidebar";
 import Topbar from "../dashboard/Topbar";
 
 export const metadata: Metadata = {
-  title: "Dashboard - Isuru Fiberglass",
+  title: "Settings - Isuru Fiberglass",
 };
 
 export default function DashboardLayout({
@@ -12,13 +12,13 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen  bg-slate-50 flex">
       <Sidebar />
 
-      <main className="ml-72 min-h-screen">
-        <div className="p-4 md:p-6">
+      <main className="ml-72 min-h-screen ">
+        <div className="w-full p-4 md:p-6">
           <Topbar />
-          <div className="mt-6">{children}</div>
+          <div className="mt-6 w-full">{children}</div>
         </div>
       </main>
     </div>

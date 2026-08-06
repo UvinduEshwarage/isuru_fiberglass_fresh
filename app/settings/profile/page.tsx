@@ -105,36 +105,40 @@ export default function ProfileSettingsPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-8">
+  <div className="w-full">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
-      <div className="bg-white rounded-xl shadow border">
+      {/* Header */}
+      <div className="border-b border-gray-200 px-6 py-5">
+        <h1 className="text-2xl font-bold text-gray-900">
+          Profile Settings
+        </h1>
 
-        <div className="border-b px-6 py-4">
-          <h1 className="text-2xl font-bold">
-            Profile Settings
-          </h1>
+        <p className="text-gray-500 mt-1">
+          Update your administrator profile.
+        </p>
+      </div>
 
-          <p className="text-gray-500 mt-1">
-            Update your administrator profile.
-          </p>
-        </div>
+      {/* Content */}
+      <div className="p-6">
 
-        <div className="p-6 space-y-6">
+        {message && (
+          <div className="mb-6 rounded-lg bg-green-100 text-green-700 px-4 py-3">
+            {message}
+          </div>
+        )}
 
-          {message && (
-            <div className="rounded-lg bg-green-100 text-green-700 px-4 py-3">
-              {message}
-            </div>
-          )}
+        {error && (
+          <div className="mb-6 rounded-lg bg-red-100 text-red-700 px-4 py-3">
+            {error}
+          </div>
+        )}
 
-          {error && (
-            <div className="rounded-lg bg-red-100 text-red-700 px-4 py-3">
-              {error}
-            </div>
-          )}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-8 gap-y-6">
 
+          {/* Name */}
           <div>
-            <label className="block mb-2 font-medium">
+            <label className="block mb-2 font-medium text-gray-700">
               Name
             </label>
 
@@ -147,12 +151,15 @@ export default function ProfileSettingsPage() {
                   name: e.target.value,
                 })
               }
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-blue-500
+                         focus:border-transparent"
             />
           </div>
 
+          {/* Email */}
           <div>
-            <label className="block mb-2 font-medium">
+            <label className="block mb-2 font-medium text-gray-700">
               Email
             </label>
 
@@ -160,12 +167,14 @@ export default function ProfileSettingsPage() {
               type="email"
               value={profile.email}
               disabled
-              className="w-full border rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5
+                         bg-gray-100 text-gray-500 cursor-not-allowed"
             />
           </div>
 
+          {/* Phone */}
           <div>
-            <label className="block mb-2 font-medium">
+            <label className="block mb-2 font-medium text-gray-700">
               Phone Number
             </label>
 
@@ -178,12 +187,15 @@ export default function ProfileSettingsPage() {
                   phone: e.target.value,
                 })
               }
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-blue-500
+                         focus:border-transparent"
             />
           </div>
 
+          {/* Role */}
           <div>
-            <label className="block mb-2 font-medium">
+            <label className="block mb-2 font-medium text-gray-700">
               Role
             </label>
 
@@ -191,24 +203,29 @@ export default function ProfileSettingsPage() {
               type="text"
               value={profile.role}
               disabled
-              className="w-full border rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5
+                         bg-gray-100 text-gray-500 cursor-not-allowed"
             />
-          </div>
-
-          <div className="pt-4">
-            <button
-              onClick={saveProfile}
-              disabled={saving}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg disabled:opacity-50"
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
           </div>
 
         </div>
 
-      </div>
+        {/* Footer */}
+        <div className="flex justify-end mt-8 pt-6 border-t border-gray-200">
+          <button
+            onClick={saveProfile}
+            disabled={saving}
+            className="bg-blue-600 hover:bg-blue-700 text-white
+                       px-6 py-2.5 rounded-lg font-medium
+                       transition-colors disabled:opacity-50
+                       disabled:cursor-not-allowed"
+          >
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
 
+      </div>
     </div>
-  );
+  </div>
+);
 }
