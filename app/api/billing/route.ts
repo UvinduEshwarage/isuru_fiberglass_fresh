@@ -5,7 +5,7 @@ import { verifyJwt } from "../../../lib/auth";
 import {
   ensureNewInvoiceIndexes,
   newInvoiceCollection,
-  NewInvoiceDocument
+  NewInvoiceDocument,
 } from "../../../lib/newInvoiceModel";
 
 function requireAuth(request: NextRequest) {
@@ -17,18 +17,33 @@ function requireAuth(request: NextRequest) {
   return verifyJwt(token);
 }
 
+function generateInvoiceId() {
+  const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const randomPart = Math.floor(Math.random() * 9000) + 1000;
+  return `INV-${datePart}-${randomPart}`;
+}
+
 export async function GET(request: NextRequest) {
   try {
     requireAuth(request);
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 401 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 401 },
+    );
   }
 
   const db = await connectDB();
   await ensureNewInvoiceIndexes(db);
-  const invoices = await newInvoiceCollection(db).find().sort({ createdAt: -1 }).toArray();
+  const invoices = await newInvoiceCollection(db)
+    .find()
+    .sort({ createdAt: -1 })
+    .toArray();
 
-  const totalRevenue = invoices.reduce((sum, invoice) => sum + (Number(invoice.totalPrice) || 0), 0);
+  const totalRevenue = invoices.reduce(
+    (sum, invoice) => sum + (Number(invoice.totalPrice) || 0),
+    0,
+  );
   const invoiceCount = invoices.length;
 
   const monthlyRevenue: Record<string, number> = {};
@@ -36,7 +51,8 @@ export async function GET(request: NextRequest) {
     const date = new Date(invoice.date || invoice.createdAt);
     if (Number.isNaN(date.valueOf())) return;
     const month = date.toISOString().slice(0, 7);
-    monthlyRevenue[month] = (monthlyRevenue[month] || 0) + (Number(invoice.totalPrice) || 0);
+    monthlyRevenue[month] =
+      (monthlyRevenue[month] || 0) + (Number(invoice.totalPrice) || 0);
   });
 
   return NextResponse.json({
@@ -53,7 +69,10 @@ export async function POST(request: NextRequest) {
   try {
     requireAuth(request);
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 401 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 401 },
+    );
   }
 
   const body = await request.json().catch(() => null);
@@ -75,6 +94,7 @@ export async function POST(request: NextRequest) {
   }, 0);
 
   const invoice = {
+    InvoiceID: generateInvoiceId(),
     customerName,
     items,
     totalPrice: invoiceTotal,
