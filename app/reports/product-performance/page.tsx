@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Download, Package, TrendingUp, ShoppingCart, Award } from "lucide-react";
 
 interface ProductStats {
   name: string;
@@ -97,107 +97,182 @@ export default function ProductPerformanceReportPage() {
     return `Rs. ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value)}`;
   };
 
+  const handleExport = () => {
+    const csvContent = [
+      ["Product Performance Report"],
+      [],
+      ["Summary Stats"],
+      ["Total Revenue", formatCurrency(stats.totalRevenue)],
+      ["Total Quantity Sold", stats.totalQuantity],
+      ["Unique Products", stats.uniqueProducts],
+      ["Top Product", stats.topProduct?.name || "N/A"],
+      [],
+      ["Product Details"],
+      ["Rank", "Product Name", "Revenue", "Quantity Sold", "Appearances", "Avg Price", "% of Total"],
+      ...sortedProducts.map((product, idx) => [
+        idx + 1,
+        product.name,
+        formatCurrency(product.totalRevenue),
+        product.totalQuantity,
+        product.appearances,
+        formatCurrency(product.avgPrice),
+        ((product.totalRevenue / stats.totalRevenue) * 100).toFixed(2),
+      ]),
+    ]
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
+
+    const element = document.createElement("a");
+    element.setAttribute("href", `data:text/csv;charset=utf-8,${encodeURIComponent(csvContent)}`);
+    element.setAttribute("download", `product-performance-report.csv`);
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Link href="/reports" className="rounded-lg p-1.5 hover:bg-slate-100">
-          <ChevronLeft className="w-5 h-5 text-slate-600" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Product Performance</h1>
-          <p className="text-sm text-slate-600 mt-1">Sales and revenue by product</p>
+      {/* Header */}
+      <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/reports" className="rounded-lg p-1.5 hover:bg-slate-100">
+              <ChevronLeft className="w-5 h-5 text-slate-600" />
+            </Link>
+            <div>
+              <p className="text-sm text-slate-500 uppercase tracking-[0.2em]">Performance Report</p>
+              <h1 className="text-3xl font-semibold text-slate-900">Product Analytics</h1>
+            </div>
+          </div>
+
+          <button
+            onClick={handleExport}
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700 transition"
+          >
+            <Download className="w-4 h-4" />
+            Export
+          </button>
         </div>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-4">
-        <div className="rounded-2xl bg-white p-4 border border-slate-200">
-          <p className="text-xs font-medium text-slate-500 uppercase">Total Revenue</p>
-          <p className="mt-2 text-xl font-semibold text-slate-900">{formatCurrency(stats.totalRevenue)}</p>
+      {/* KPI Cards */}
+      <div className="grid gap-4 lg:grid-cols-4">
+        <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-500">Total Revenue</p>
+              <p className="text-3xl font-bold text-slate-900 mt-2">
+                {formatCurrency(stats.totalRevenue)}
+              </p>
+            </div>
+            <div className="p-3 rounded-lg bg-blue-100">
+              <TrendingUp className="w-6 h-6 text-blue-600" />
+            </div>
+          </div>
         </div>
-        <div className="rounded-2xl bg-white p-4 border border-slate-200">
-          <p className="text-xs font-medium text-slate-500 uppercase">Qty Sold</p>
-          <p className="mt-2 text-xl font-semibold text-slate-900">{stats.totalQuantity}</p>
+
+        <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-500">Qty Sold</p>
+              <p className="text-3xl font-bold text-slate-900 mt-2">
+                {stats.totalQuantity}
+              </p>
+            </div>
+            <div className="p-3 rounded-lg bg-purple-100">
+              <ShoppingCart className="w-6 h-6 text-purple-600" />
+            </div>
+          </div>
         </div>
-        <div className="rounded-2xl bg-white p-4 border border-slate-200">
-          <p className="text-xs font-medium text-slate-500 uppercase">Products</p>
-          <p className="mt-2 text-xl font-semibold text-slate-900">{stats.uniqueProducts}</p>
+
+        <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-500">Products</p>
+              <p className="text-3xl font-bold text-slate-900 mt-2">
+                {stats.uniqueProducts}
+              </p>
+            </div>
+            <div className="p-3 rounded-lg bg-emerald-100">
+              <Package className="w-6 h-6 text-emerald-600" />
+            </div>
+          </div>
         </div>
-        <div className="rounded-2xl bg-white p-4 border border-slate-200">
-          <p className="text-xs font-medium text-slate-500 uppercase">Top Product</p>
-          <p className="mt-2 text-sm font-semibold text-slate-900 line-clamp-1">{stats.topProduct?.name || "—"}</p>
+
+        <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-500">Top Product</p>
+              <p className="text-lg font-bold text-slate-900 mt-2 line-clamp-2">
+                {stats.topProduct?.name || "—"}
+              </p>
+            </div>
+            <div className="p-3 rounded-lg bg-orange-100">
+              <Award className="w-6 h-6 text-orange-600" />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="rounded-2xl bg-white border border-slate-200 overflow-x-auto">
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-          <h2 className="font-semibold text-slate-900 text-sm">{products.length} products</h2>
+      {/* Products Table */}
+      <div className="rounded-2xl bg-white border border-slate-200 overflow-hidden">
+        <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+          <h2 className="font-semibold text-slate-900 text-lg">{products.length} Product{products.length !== 1 ? 's' : ''}</h2>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-900 outline-none focus:border-slate-400"
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 outline-none focus:border-slate-400 cursor-pointer"
           >
-            <option value="revenue">Revenue</option>
-            <option value="quantity">Quantity</option>
-            <option value="appearances">Popularity</option>
+            <option value="revenue">Sort by Revenue</option>
+            <option value="quantity">Sort by Quantity</option>
+            <option value="appearances">Sort by Popularity</option>
           </select>
         </div>
 
         {loading ? (
-          <div className="text-center py-6 text-sm text-slate-600">Loading...</div>
+          <div className="text-center py-12 text-sm text-slate-600">Loading...</div>
         ) : error ? (
-          <div className="text-center py-6 text-sm text-red-600">{error}</div>
+          <div className="text-center py-12 text-sm text-red-600">{error}</div>
         ) : sortedProducts.length === 0 ? (
-          <div className="text-center py-6 text-sm text-slate-600">No data available</div>
+          <div className="text-center py-12 text-sm text-slate-600">No data available</div>
         ) : (
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Product Name
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Revenue
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Qty Sold
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Appearances
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Avg Price
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  % of Total
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 bg-white">
-              {sortedProducts.map((product, idx) => (
-                <tr key={product.name} className="hover:bg-slate-50">
-                  <td className="px-6 py-4 text-sm font-medium text-slate-900">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-semibold text-slate-500 w-6 text-center">#{idx + 1}</span>
-                      {product.name}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right text-sm font-semibold text-slate-900">
-                    {formatCurrency(product.totalRevenue)}
-                  </td>
-                  <td className="px-6 py-4 text-right text-sm text-slate-700">{product.totalQuantity}</td>
-                  <td className="px-6 py-4 text-right text-sm text-slate-700">{product.appearances} times</td>
-                  <td className="px-6 py-4 text-right text-sm text-slate-700">
-                    {formatCurrency(product.avgPrice)}
-                  </td>
-                  <td className="px-6 py-4 text-right text-sm">
-                    <span className="inline-block rounded-full bg-emerald-100 px-3 py-1 text-emerald-800">
-                      {((product.totalRevenue / stats.totalRevenue) * 100).toFixed(1)}%
-                    </span>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50">
+                  <th className="text-left py-3 px-6 text-slate-600 font-semibold">#</th>
+                  <th className="text-left py-3 px-6 text-slate-600 font-semibold">Product Name</th>
+                  <th className="text-right py-3 px-6 text-slate-600 font-semibold">Revenue</th>
+                  <th className="text-center py-3 px-6 text-slate-600 font-semibold">Qty Sold</th>
+                  <th className="text-center py-3 px-6 text-slate-600 font-semibold">Appearances</th>
+                  <th className="text-right py-3 px-6 text-slate-600 font-semibold">Avg Price</th>
+                  <th className="text-center py-3 px-6 text-slate-600 font-semibold">% of Total</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {sortedProducts.map((product, idx) => (
+                  <tr key={product.name} className="border-b border-slate-100 hover:bg-slate-50">
+                    <td className="py-3 px-6 text-slate-600 font-medium">#{idx + 1}</td>
+                    <td className="py-3 px-6 text-slate-900 font-medium">{product.name}</td>
+                    <td className="py-3 px-6 text-right text-slate-900 font-semibold">
+                      {formatCurrency(product.totalRevenue)}
+                    </td>
+                    <td className="py-3 px-6 text-center text-slate-700">{product.totalQuantity}</td>
+                    <td className="py-3 px-6 text-center text-slate-700">{product.appearances}x</td>
+                    <td className="py-3 px-6 text-right text-slate-700">
+                      {formatCurrency(product.avgPrice)}
+                    </td>
+                    <td className="py-3 px-6 text-center">
+                      <span className="inline-block rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-800">
+                        {((product.totalRevenue / stats.totalRevenue) * 100).toFixed(1)}%
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

@@ -86,15 +86,15 @@ const nav: NavItem[] = [
       { label: "Product Recommendations", href: "/mba/recommendations", icon: Layers },
     ],
   },
-  // {
-  //   label: "Reports",
-  //   icon: FileText,
-  //   children: [
-  //     { label: "Daily Sales Report", href: "/reports/daily", icon: Calendar },
-  //     { label: "Monthly Revenue Report", href: "/reports/monthly", icon: PieChart },
-  //     { label: "Product Performance Report", href: "/reports/product-performance", icon: BarChart2 },
-  //   ],
-  // },
+  {
+    label: "Reports",
+    icon: FileText,
+    children: [
+      { label: "Daily Sales Report", href: "/reports/daily", icon: Calendar },
+      { label: "Monthly Revenue Report", href: "/reports/monthly", icon: PieChart },
+      { label: "Product Performance Report", href: "/reports/product-performance", icon: BarChart2 },
+    ],
+  },
   {
     label: "Settings",
     icon: Settings,
