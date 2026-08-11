@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { jsPDF } from "jspdf";
 
 interface InvoiceItem {
+  productId?: string;
   name: string;
   quantity: number;
   price: number;
@@ -90,6 +92,61 @@ export default function BillingHistoryPage() {
     return `Rs. ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value)}`;
   };
 
+  async function downloadInvoice(invoiceId: string) {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!token) return;
+
+    const response = await fetch(`/api/billing/${invoiceId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      alert(data.error || "Unable to download invoice");
+      return;
+    }
+
+    const invoice = data.invoice;
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const margin = 40;
+    let y = 50;
+
+    doc.setFontSize(18);
+    doc.text("Invoice", margin, y);
+    y += 30;
+
+    doc.setFontSize(11);
+    doc.text(`Invoice ID: ${invoice.InvoiceID || invoice._id}`, margin, y);
+    y += 18;
+    doc.text(`Customer: ${invoice.customerName}`, margin, y);
+    y += 18;
+    doc.text(`Date: ${new Date(invoice.date).toLocaleString()}`, margin, y);
+    y += 28;
+
+    doc.setFontSize(12);
+    doc.text("Items", margin, y);
+    y += 18;
+
+    invoice.items.forEach((item: any, index: number) => {
+      const line = `${index + 1}. ${item.name} x${item.quantity} @ Rs. ${item.price} = Rs. ${item.quantity * item.price}`;
+      const split = doc.splitTextToSize(line, 520);
+      doc.text(split, margin, y);
+      y += split.length * 14;
+      if (y > 760) {
+        doc.addPage();
+        y = margin;
+      }
+    });
+
+    y += 18;
+    doc.setFontSize(13);
+    doc.text(`Total: Rs. ${invoice.totalPrice}`, margin, y);
+
+    doc.save(`invoice-${invoice.InvoiceID || invoice._id}.pdf`);
+  }
+
   const formatDate = (value: string) => {
     const d = new Date(value);
     return d.toLocaleString();
@@ -157,6 +214,7 @@ export default function BillingHistoryPage() {
               <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Amount</th>
               <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Items</th>
               <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Date</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Download</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">
@@ -167,6 +225,15 @@ export default function BillingHistoryPage() {
                 <td className="px-6 py-4 text-right text-sm font-semibold text-slate-900">{formatCurrency(invoice.totalPrice)}</td>
                 <td className="px-6 py-4 text-sm text-slate-700">{invoice.items.length}</td>
                 <td className="px-6 py-4 text-sm text-slate-500">{formatDate(invoice.date)}</td>
+                <td className="px-6 py-4 text-sm text-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => downloadInvoice(invoice._id)}
+                    className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white hover:bg-slate-800"
+                  >
+                    Download
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

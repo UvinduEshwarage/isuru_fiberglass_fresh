@@ -4,13 +4,9 @@ import { ObjectId } from "mongodb";
 import { connectDB } from "../../../../lib/mongodb";
 import { verifyJwt } from "../../../../lib/auth";
 
-import {
-  invoiceCollection,
-} from "../../../../lib/invoiceModel";
+import { invoiceCollection } from "../../../../lib/invoiceModel";
 
-import {
-  newInvoiceCollection,
-} from "../../../../lib/newInvoiceModel";
+import { newInvoiceCollection } from "../../../../lib/newInvoiceModel";
 
 function requireAuth(request: NextRequest) {
   const authHeader = request.headers.get("authorization") || "";
@@ -28,7 +24,7 @@ function requireAuth(request: NextRequest) {
 // =====================================
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   requireAuth(request);
 
@@ -44,7 +40,10 @@ export async function GET(
   if (newInvoice) {
     return NextResponse.json({
       source: "new",
-      invoice: newInvoice,
+      invoice: {
+        ...newInvoice,
+        _id: newInvoice._id?.toString?.() || id,
+      },
     });
   }
 
@@ -56,7 +55,10 @@ export async function GET(
   if (historicalInvoice) {
     return NextResponse.json({
       source: "historical",
-      invoice: historicalInvoice,
+      invoice: {
+        ...historicalInvoice,
+        _id: historicalInvoice._id?.toString?.() || id,
+      },
     });
   }
 
@@ -66,7 +68,7 @@ export async function GET(
     },
     {
       status: 404,
-    }
+    },
   );
 }
 // =====================================
@@ -75,7 +77,7 @@ export async function GET(
 // =====================================
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     requireAuth(request);
@@ -87,34 +89,30 @@ export async function PUT(
     if (body.items) {
       body.totalPrice = body.items.reduce(
         (sum: number, item: any) =>
-          sum +
-          (Number(item.price) || 0) *
-            (Number(item.quantity) || 1),
-        0
+          sum + (Number(item.price) || 0) * (Number(item.quantity) || 1),
+        0,
       );
     }
 
     const db = await connectDB();
 
-    const result = await newInvoiceCollection(db)
-      .updateOne(
-        {
-          _id: new ObjectId(id),
-        },
-        {
-          $set: body,
-        }
-      );
+    const result = await newInvoiceCollection(db).updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $set: body,
+      },
+    );
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
         {
-          error:
-            "Only new invoices can be updated",
+          error: "Only new invoices can be updated",
         },
         {
           status: 404,
-        }
+        },
       );
     }
 
@@ -128,7 +126,7 @@ export async function PUT(
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }
@@ -139,7 +137,7 @@ export async function PUT(
 // =====================================
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     requireAuth(request);
@@ -148,20 +146,18 @@ export async function DELETE(
 
     const db = await connectDB();
 
-    const result = await newInvoiceCollection(db)
-      .deleteOne({
-        _id: new ObjectId(id),
-      });
+    const result = await newInvoiceCollection(db).deleteOne({
+      _id: new ObjectId(id),
+    });
 
     if (result.deletedCount === 0) {
       return NextResponse.json(
         {
-          error:
-            "Only new invoices can be deleted",
+          error: "Only new invoices can be deleted",
         },
         {
           status: 404,
-        }
+        },
       );
     }
 
@@ -175,7 +171,7 @@ export async function DELETE(
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }

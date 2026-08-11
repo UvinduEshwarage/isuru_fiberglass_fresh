@@ -7,6 +7,10 @@ import {
   newInvoiceCollection,
   NewInvoiceDocument,
 } from "../../../lib/newInvoiceModel";
+import {
+  ensureProductIndexes,
+  productCollection,
+} from "../../../lib/productModel";
 
 function requireAuth(request: NextRequest) {
   const authHeader = request.headers.get("authorization") || "";
@@ -93,6 +97,58 @@ export async function POST(request: NextRequest) {
     return sum + price * quantity;
   }, 0);
 
+  const itemProductIds = items
+    .filter((item) => item.productId && typeof item.productId === "string")
+    .map((item) => ({
+      productId: item.productId as string,
+      quantity: Number(item.quantity) || 1,
+    }));
+
+  const db = await connectDB();
+  await ensureProductIndexes(db);
+
+  if (itemProductIds.length > 0) {
+    const productRows = await productCollection(db)
+      .find({
+        productId: { $in: itemProductIds.map((item) => item.productId) },
+      })
+      .toArray();
+
+    const missingProducts = itemProductIds.filter(
+      (item) =>
+        !productRows.some((product) => product.productId === item.productId),
+    );
+
+    if (missingProducts.length > 0) {
+      return NextResponse.json(
+        {
+          error: `Product not found: ${missingProducts
+            .map((item) => item.productId)
+            .join(", ")}`,
+        },
+        { status: 400 },
+      );
+    }
+
+    const insufficientStock = itemProductIds.filter((item) => {
+      const product = productRows.find(
+        (product) => product.productId === item.productId,
+      );
+      return !product || (Number(product.stock) || 0) < item.quantity;
+    });
+
+    if (insufficientStock.length > 0) {
+      return NextResponse.json(
+        {
+          error: `Insufficient stock for: ${insufficientStock
+            .map((item) => item.productId)
+            .join(", ")}`,
+        },
+        { status: 400 },
+      );
+    }
+  }
+
   const invoice = {
     InvoiceID: generateInvoiceId(),
     customerName,
@@ -102,9 +158,19 @@ export async function POST(request: NextRequest) {
     createdAt: new Date().toISOString(),
   };
 
-  const db = await connectDB();
   await ensureNewInvoiceIndexes(db);
   const result = await newInvoiceCollection(db).insertOne(invoice);
+
+  if (itemProductIds.length > 0) {
+    const stockUpdates = itemProductIds.map((item) => ({
+      updateOne: {
+        filter: { productId: item.productId },
+        update: { $inc: { stock: -item.quantity } },
+      },
+    }));
+
+    await productCollection(db).bulkWrite(stockUpdates);
+  }
 
   return NextResponse.json(
     { invoice: { ...invoice, _id: result.insertedId.toString() } },
