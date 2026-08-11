@@ -9,7 +9,7 @@ interface Invoice {
   customerName: string;
   date: string;
   items: Array<{ name: string; quantity: number; price: number }>;
-  totalAmount: number;
+  totalPrice: number;
   createdAt: string;
 }
 
@@ -58,7 +58,7 @@ export default function DailySalesReportPage() {
   }, [invoices, selectedDate]);
 
   const dailyStats = useMemo(() => {
-    const total = filteredInvoices.reduce((sum, inv) => sum + (inv.totalAmount || 0), 0);
+    const total = filteredInvoices.reduce((sum, inv) => sum + (Number(inv.totalPrice) || 0), 0);
     const count = filteredInvoices.length;
     const avgValue = count > 0 ? total / count : 0;
     const totalQuantity = filteredInvoices.reduce((sum, inv) => sum + inv.items.reduce((s, item) => s + item.quantity, 0), 0);
@@ -99,7 +99,7 @@ export default function DailySalesReportPage() {
           invoice.customerName,
           invoice.items.map((item) => item.name).join("; "),
           totalQty,
-          formatCurrency(invoice.totalAmount || 0),
+          formatCurrency(Number(invoice.totalPrice) || 0),
           time,
         ];
       }),
@@ -244,7 +244,7 @@ export default function DailySalesReportPage() {
                       </td>
                       <td className="py-3 px-6 text-center text-slate-700">{totalQty}</td>
                       <td className="py-3 px-6 text-right text-slate-900 font-semibold">
-                        {formatCurrency(invoice.totalAmount || 0)}
+                        {formatCurrency(Number(invoice.totalPrice) || 0)}
                       </td>
                       <td className="py-3 px-6 text-slate-600">{time}</td>
                     </tr>

@@ -46,9 +46,10 @@ export default function MonthlyRevenueReportPage() {
             }
 
             const entry = monthMap.get(monthKey)!;
-            entry.revenue += inv.totalAmount || 0;
+            const amount = Number(inv.totalPrice) || 0;
+            entry.revenue += amount;
             entry.count += 1;
-            entry.amounts.push(inv.totalAmount || 0);
+            entry.amounts.push(amount);
           });
 
           const months = Array.from(monthMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
@@ -331,6 +332,7 @@ export default function MonthlyRevenueReportPage() {
             </table>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

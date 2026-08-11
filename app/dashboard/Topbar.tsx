@@ -144,12 +144,12 @@ export default function Topbar() {
         href="/settings/profile"
         className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 transition hover:bg-slate-100"
       >
-        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-blue-600">
+        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full ">
           <Image
             src="/favicon.ico"
             alt="Business Logo"
-            width={26}
-            height={26}
+            width={40}
+            height={35}
             className="object-contain"
           />
         </div>
