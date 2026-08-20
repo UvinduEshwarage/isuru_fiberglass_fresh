@@ -103,6 +103,7 @@ export default function ForecastChartsPage() {
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-slate-900">Projected Monthly Forecast</h2>
+                
               </div>
             </div>
             {loading ? (
