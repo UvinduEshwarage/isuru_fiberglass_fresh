@@ -2,16 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-// interface Product {
-//   _id: string;
-//   productId: string;
-//   name: string;
-//   category: string;
-//   stock: number;
-//   price: number;
-//   active: boolean;
-//   createdAt: string;
-// }
 interface Product {
   _id: string;
 
@@ -117,17 +107,7 @@ export default function ProductInventoryPage() {
       <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
-            {/* <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-  Image
-</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Product ID</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Category</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Stock</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Price</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-            </tr> */}
+            
             <tr>
   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
     Image
@@ -159,18 +139,7 @@ export default function ProductInventoryPage() {
 </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">
-            {/* {products.map((product) => (
-              <tr key={product._id} className="hover:bg-slate-50">
-                <td className="px-6 py-4 text-sm font-medium text-slate-900">{product.productId}</td>
-                <td className="px-6 py-4 text-sm text-slate-700">{product.name}</td>
-                <td className="px-6 py-4 text-sm text-slate-700">{product.category}</td>
-                <td className={`px-6 py-4 text-right text-sm font-semibold ${product.stock <= 5 ? "text-rose-600" : "text-slate-900"}`}>
-                  {product.stock}
-                </td>
-                <td className="px-6 py-4 text-right text-sm font-semibold text-slate-900">{formatCurrency(product.price)}</td>
-                <td className="px-6 py-4 text-sm text-slate-700">{product.active ? "Active" : "Inactive"}</td>
-              </tr>
-            ))} */}
+            
             {products.map((product) => (
   <tr
     key={product._id}

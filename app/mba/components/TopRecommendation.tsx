@@ -12,7 +12,7 @@ export default function TopRecommendation({
   confidence,
 }: TopRecommendationProps) {
   return (
-    <div className="rounded-3xl bg-gradient-to-r from-emerald-600 to-teal-600 p-8 text-white shadow-lg">
+    <div className="rounded-3xl bg-linear-to-r from-emerald-600 to-teal-600 p-8 text-white shadow-lg">
       <div className="flex items-center gap-3">
         <Award className="h-8 w-8" />
 
