@@ -88,6 +88,7 @@ const nav: NavItem[] = [
   },
   {
     label: "Reports",
+    href:"/reports",
     icon: FileText,
     children: [
       { label: "Daily Sales Report", href: "/reports/daily", icon: Calendar },
