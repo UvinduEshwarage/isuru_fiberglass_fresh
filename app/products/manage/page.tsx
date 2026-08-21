@@ -1,18 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../../components/ui/alert-dialog";
 
-// interface Product {
-//   _id: string;
-//   productId: string;
-//   name: string;
-//   category: string;
-//   description?: string;
-//   stock: number;
-//   price: number;
-//   active: boolean;
-//   createdAt: string;
-// }
+
 interface Product {
   _id: string;
 
@@ -85,6 +85,7 @@ export default function ProductsManagePage() {
   const [submitting, setSubmitting] = useState(false);
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
 
   //images
   const [image, setImage] = useState<File | null>(null);
@@ -351,41 +352,7 @@ async function handleUpdate(
     }
   }
 
-  // async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  //   event.preventDefault();
-  //   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-  //   if (!token) {
-  //     setError("Authentication required to add products.");
-  //     return;
-  //   }
 
-  //   setSubmitting(true);
-  //   setSuccessMessage(null);
-
-  //   try {
-  //     const response = await fetch("/api/products", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify(form),
-  //     });
-  //     const data = await response.json();
-  //     if (!response.ok) {
-  //       throw new Error(data.error || "Failed to create product.");
-  //     }
-
-  //     setProducts((prev) => [...prev, data.product]);
-  //     setForm({ productId: "", name: "", category: "", description: "", stock: 0, price: 0, active: true });
-  //     setSuccessMessage("Product created successfully.");
-  //     setError(null);
-  //   } catch (err: any) {
-  //     setError(err.message);
-  //   } finally {
-  //     setSubmitting(false);
-  //   }
-  // }
 
   async function handleSubmit(
   event: React.FormEvent<HTMLFormElement>
@@ -710,14 +677,22 @@ async function handleUpdate(
       Edit
     </button>
 
-    <button
+    {/* <button
       type="button"
       onClick={() => handleDelete(product._id)}
       disabled={deleting}
       className="inline-flex items-center rounded-full bg-rose-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-rose-300"
     >
       {deleting ? "Deleting..." : "Delete"}
-    </button>
+    </button> */}
+    <button
+  type="button"
+  onClick={() => setProductToDelete(product)}
+  disabled={deleting}
+  className="inline-flex items-center rounded-full bg-rose-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-rose-300"
+>
+  {deleting ? "Deleting..." : "Delete"}
+</button>
   </div>
 </td>
                       
@@ -1025,7 +1000,53 @@ async function handleUpdate(
 
         </div>
       )}
+<AlertDialog
+  open={!!productToDelete}
+  onOpenChange={(open) => {
+    if (!open) {
+      setProductToDelete(null);
+    }
+  }}
+>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>
+        Delete Product?
+      </AlertDialogTitle>
 
+      <AlertDialogDescription>
+        Are you sure you want to delete{" "}
+        <span className="font-semibold text-slate-900">
+          {productToDelete?.name}
+        </span>
+        ? This action cannot be undone.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+
+    <AlertDialogFooter>
+      <AlertDialogCancel
+        onClick={() => setProductToDelete(null)}
+      >
+        Cancel
+      </AlertDialogCancel>
+
+      <AlertDialogAction
+        onClick={async () => {
+          if (!productToDelete) return;
+
+          const productId = productToDelete._id;
+
+          setProductToDelete(null);
+
+          await handleDelete(productId);
+        }}
+        className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+      >
+        Delete Product
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
     </div>
   );
 }
