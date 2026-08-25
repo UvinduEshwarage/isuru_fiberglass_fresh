@@ -1,11 +1,4 @@
-// export default function profileSettingsPage() {
-//     return(
-//         <div>
-//             <h1>Profile Settings</h1>
-//             <p>This is the profile settings page.</p>
-//         </div>
-//     )
-// }
+
 "use client";
 
 import { useEffect, useState } from "react";

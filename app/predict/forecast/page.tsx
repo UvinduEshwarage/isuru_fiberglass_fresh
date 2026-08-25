@@ -28,7 +28,6 @@ function getQuarter(month: number) {
 }
 
 // Sinhala & Tamil New Year falls in mid-April, a known demand spike period.
-// Adjust this if your training data defines "New Year" differently (e.g. a wider Mar-Apr window).
 function detectIsNewYear(month: number) {
   return month === 4;
 }
