@@ -25,7 +25,8 @@ export default function BillingOverviewPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     if (!token) {
       setError("Authentication required");
@@ -68,11 +69,19 @@ export default function BillingOverviewPage() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading billing overview...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading billing overview...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="min-h-screen flex items-center justify-center text-red-600">{error}</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-600">
+        {error}
+      </div>
+    );
   }
 
   return (
@@ -80,15 +89,25 @@ export default function BillingOverviewPage() {
       <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm text-slate-500 uppercase tracking-[0.2em]">Billing Overview</p>
-            <h1 className="text-3xl font-semibold text-slate-900">Invoice Management</h1>
+            <p className="text-sm text-slate-500 uppercase tracking-[0.2em]">
+              Billing Overview
+            </p>
+            <h1 className="text-3xl font-semibold text-slate-900">
+              Invoice Management
+            </h1>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/billing/create" className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700">
+            <Link
+              href="/billing/create"
+              className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700"
+            >
               Create Invoice
             </Link>
-            <Link href="/billing/history" className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+            <Link
+              href="/billing/history"
+              className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+            >
               Invoice History
             </Link>
           </div>
@@ -98,25 +117,42 @@ export default function BillingOverviewPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
           <p className="text-sm text-slate-500">Total Revenue</p>
-          <p className="mt-3 text-3xl font-semibold text-slate-900">{summary ? formatCurrency(summary.totalRevenue) : "Rs. 0"}</p>
+          <p className="mt-3 text-3xl font-semibold text-slate-900">
+            {summary ? formatCurrency(summary.totalRevenue) : "Rs. 0"}
+          </p>
         </div>
         <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
           <p className="text-sm text-slate-500">Invoices Created</p>
-          <p className="mt-3 text-3xl font-semibold text-slate-900">{summary?.invoiceCount ?? 0}</p>
+          <p className="mt-3 text-3xl font-semibold text-slate-900">
+            {summary?.invoiceCount ?? 0}
+          </p>
         </div>
         <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
           <p className="text-sm text-slate-500">Recent Invoice Total</p>
-          <p className="mt-3 text-3xl font-semibold text-slate-900">{summary ? formatCurrency(Object.values(summary.monthlyRevenue).slice(-1)[0] || 0) : "Rs. 0"}</p>
+          <p className="mt-3 text-3xl font-semibold text-slate-900">
+            {summary
+              ? formatCurrency(
+                  Object.values(summary.monthlyRevenue).slice(-1)[0] || 0,
+                )
+              : "Rs. 0"}
+          </p>
         </div>
       </div>
 
       <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
         <div className="flex items-center justify-between gap-4 mb-4">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">Recent invoices</h2>
-            <p className="text-sm text-slate-500">Latest created invoices from billing.</p>
+            <h2 className="text-xl font-semibold text-slate-900">
+              Recent invoices
+            </h2>
+            <p className="text-sm text-slate-500">
+              Latest created invoices from billing.
+            </p>
           </div>
-          <Link href="/billing/history" className="text-sm font-semibold text-slate-700 hover:text-slate-900">
+          <Link
+            href="/billing/history"
+            className="text-sm font-semibold text-slate-700 hover:text-slate-900"
+          >
             View all
           </Link>
         </div>
@@ -126,15 +162,26 @@ export default function BillingOverviewPage() {
         ) : (
           <div className="space-y-3">
             {latestInvoices.map((invoice) => (
-              <div key={invoice._id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <div
+                key={invoice._id}
+                className="rounded-3xl border border-slate-200 bg-slate-50 p-4"
+              >
                 <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
                   <div>
-                    <p className="font-semibold text-slate-900">{invoice.customerName}</p>
-                    <p className="text-sm text-slate-500">{formatDate(invoice.date)}</p>
+                    <p className="font-semibold text-slate-900">
+                      {invoice.customerName}
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      {formatDate(invoice.date)}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-slate-900">{formatCurrency(invoice.totalPrice)}</p>
-                    <p className="text-sm text-slate-500">{invoice.items.length} items</p>
+                    <p className="font-semibold text-slate-900">
+                      {formatCurrency(invoice.totalPrice)}
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      {invoice.items.length} items
+                    </p>
                   </div>
                 </div>
               </div>

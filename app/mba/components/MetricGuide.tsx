@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  BarChart3,
-  ShieldCheck,
-  TrendingUp,
-} from "lucide-react";
+import { BarChart3, ShieldCheck, TrendingUp } from "lucide-react";
 
 const metrics = [
   {
@@ -51,15 +47,11 @@ export default function MetricGuide() {
               key={metric.title}
               className="rounded-2xl border border-slate-100 p-5"
             >
-              <div
-                className={`inline-flex rounded-xl p-3 ${metric.color}`}
-              >
+              <div className={`inline-flex rounded-xl p-3 ${metric.color}`}>
                 <Icon className="h-6 w-6" />
               </div>
 
-              <h3 className="mt-4 text-lg font-semibold">
-                {metric.title}
-              </h3>
+              <h3 className="mt-4 text-lg font-semibold">{metric.title}</h3>
 
               <p className="mt-2 text-sm text-slate-500">
                 {metric.description}

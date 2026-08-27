@@ -78,7 +78,7 @@ export default function ForecastPage() {
   const quarter = useMemo(() => getQuarter(month), [month]);
   const monthName = useMemo(
     () => monthOptions.find((item) => item.value === month)?.label || "January",
-    [month]
+    [month],
   );
   const isQ1 = quarter === "Q1";
   const isNewYear = detectIsNewYear(month);
@@ -93,7 +93,7 @@ export default function ForecastPage() {
       IsNewYear: isNewYear,
       IsSeasonal: isSeasonal,
     }),
-    [year, month, quarter, monthName, isQ1, isNewYear, isSeasonal]
+    [year, month, quarter, monthName, isQ1, isNewYear, isSeasonal],
   );
 
   // Keep isSeasonal synced automatically unless the user overrides it
@@ -126,7 +126,10 @@ export default function ForecastPage() {
 
     const updatedHistory = [entry, ...history].slice(0, 20);
     setHistory(updatedHistory);
-    window.localStorage.setItem("revenuePredictionHistory", JSON.stringify(updatedHistory));
+    window.localStorage.setItem(
+      "revenuePredictionHistory",
+      JSON.stringify(updatedHistory),
+    );
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -162,22 +165,31 @@ export default function ForecastPage() {
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 flex flex-col gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Revenue Forecast</h1>
+            <h1 className="text-3xl font-bold text-slate-900">
+              Revenue Forecast
+            </h1>
             <p className="mt-2 text-slate-500 max-w-2xl">
-              Enter the feature values below to request a revenue prediction from the ML model.
+              Enter the feature values below to request a revenue prediction
+              from the ML model.
             </p>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-800">Input features</h2>
+            <h2 className="text-lg font-semibold text-slate-800">
+              Input features
+            </h2>
             <p className="mt-2 text-sm text-slate-500">
-              The prediction model uses year, month, quarter, Q1 flag, New Year flag, and seasonality.
+              The prediction model uses year, month, quarter, Q1 flag, New Year
+              flag, and seasonality.
             </p>
           </div>
         </div>
 
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
-          <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl bg-white p-6 shadow-sm">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6 rounded-3xl bg-white p-6 shadow-sm"
+          >
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="space-y-2">
                 <span className="text-sm font-medium text-slate-700">Year</span>
@@ -195,7 +207,9 @@ export default function ForecastPage() {
               </label>
 
               <label className="space-y-2">
-                <span className="text-sm font-medium text-slate-700">Month</span>
+                <span className="text-sm font-medium text-slate-700">
+                  Month
+                </span>
                 <select
                   value={month}
                   onChange={(event) => setMonth(Number(event.target.value))}
@@ -212,12 +226,18 @@ export default function ForecastPage() {
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-700">Seasonality</p>
-                <p className="text-sm text-slate-500">Auto-detected from month. Override if needed.</p>
+                <p className="text-sm font-medium text-slate-700">
+                  Seasonality
+                </p>
+                <p className="text-sm text-slate-500">
+                  Auto-detected from month. Override if needed.
+                </p>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className={`rounded-2xl px-4 py-2 text-sm font-semibold ${isSeasonal ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-700"}`}>
+                <div
+                  className={`rounded-2xl px-4 py-2 text-sm font-semibold ${isSeasonal ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-700"}`}
+                >
                   {isSeasonal ? "Seasonal" : "Not seasonal"}
                 </div>
 
@@ -234,26 +254,36 @@ export default function ForecastPage() {
             {seasonOverride && (
               <div className="mt-3 flex items-center gap-3">
                 <label className="flex items-center gap-3">
-                  <input type="checkbox" checked={isSeasonal} onChange={(e) => setIsSeasonal(e.target.checked)} />
+                  <input
+                    type="checkbox"
+                    checked={isSeasonal}
+                    onChange={(e) => setIsSeasonal(e.target.checked)}
+                  />
                   <span className="text-sm text-slate-700">Force seasonal</span>
                 </label>
               </div>
             )}
 
             <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
-              <div className="font-semibold text-slate-700">Computed features</div>
+              <div className="font-semibold text-slate-700">
+                Computed features
+              </div>
               <div className="mt-2 grid gap-2 sm:grid-cols-2">
                 <div>
-                  <span className="font-medium">Quarter:</span> {requestData.Quarter}
+                  <span className="font-medium">Quarter:</span>{" "}
+                  {requestData.Quarter}
                 </div>
                 <div>
-                  <span className="font-medium">Month Name:</span> {requestData.MonthName}
+                  <span className="font-medium">Month Name:</span>{" "}
+                  {requestData.MonthName}
                 </div>
                 <div>
-                  <span className="font-medium">Is Q1:</span> {requestData.IsQ1 ? "Yes" : "No"}
+                  <span className="font-medium">Is Q1:</span>{" "}
+                  {requestData.IsQ1 ? "Yes" : "No"}
                 </div>
                 <div>
-                  <span className="font-medium">Is New Year:</span> {requestData.IsNewYear ? "Yes" : "No"}
+                  <span className="font-medium">Is New Year:</span>{" "}
+                  {requestData.IsNewYear ? "Yes" : "No"}
                 </div>
               </div>
             </div>
@@ -275,15 +305,20 @@ export default function ForecastPage() {
 
           <aside className="space-y-6 rounded-3xl bg-white p-6 shadow-sm">
             <div className="space-y-3">
-              <h2 className="text-lg font-semibold text-slate-800">Prediction result</h2>
+              <h2 className="text-lg font-semibold text-slate-800">
+                Prediction result
+              </h2>
               <p className="text-slate-500">
-                The model returns an estimated revenue value based on the selected input features.
+                The model returns an estimated revenue value based on the
+                selected input features.
               </p>
             </div>
 
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-slate-700">
               <div className="flex items-center justify-between">
-                <div className="text-sm uppercase tracking-[0.2em] text-slate-500">Current payload</div>
+                <div className="text-sm uppercase tracking-[0.2em] text-slate-500">
+                  Current payload
+                </div>
                 <button
                   type="button"
                   onClick={() => setShowPayload((s) => !s)}
@@ -301,9 +336,13 @@ export default function ForecastPage() {
             </div>
 
             <div className="rounded-3xl bg-slate-900 p-5 text-white">
-              <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Predicted revenue</div>
+              <div className="text-sm uppercase tracking-[0.2em] text-slate-400">
+                Predicted revenue
+              </div>
               <div className="mt-4 text-3xl font-semibold">
-                {predictedRevenue !== null ? formatCurrency(predictedRevenue) : "No prediction yet"}
+                {predictedRevenue !== null
+                  ? formatCurrency(predictedRevenue)
+                  : "No prediction yet"}
               </div>
             </div>
           </aside>

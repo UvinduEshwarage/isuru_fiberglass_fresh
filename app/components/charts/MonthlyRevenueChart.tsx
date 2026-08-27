@@ -20,7 +20,7 @@ ChartJS.register(
   LineElement,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 interface MonthlyRevenueItem {
@@ -32,16 +32,11 @@ interface Props {
   data: MonthlyRevenueItem[];
 }
 
-export default function MonthlyRevenueChart({
-  data,
-}: Props) {
+export default function MonthlyRevenueChart({ data }: Props) {
   const labels = data.map((item) => {
     const [year, month] = item.month.split("-");
 
-    return new Date(
-      Number(year),
-      Number(month) - 1
-    ).toLocaleString("default", {
+    return new Date(Number(year), Number(month) - 1).toLocaleString("default", {
       month: "short",
       year: "2-digit",
     });
@@ -85,8 +80,7 @@ export default function MonthlyRevenueChart({
 
       tooltip: {
         callbacks: {
-          label: (context: any) =>
-            `$${context.parsed.y.toLocaleString()}`,
+          label: (context: any) => `$${context.parsed.y.toLocaleString()}`,
         },
       },
     },
@@ -96,8 +90,7 @@ export default function MonthlyRevenueChart({
         beginAtZero: true,
 
         ticks: {
-          callback: (value: any) =>
-            `Rs. ${Number(value).toLocaleString()}`,
+          callback: (value: any) => `Rs. ${Number(value).toLocaleString()}`,
         },
       },
     },
@@ -105,10 +98,7 @@ export default function MonthlyRevenueChart({
 
   return (
     <div className="h-87.5">
-      <Line
-        data={chartData}
-        options={options}
-      />
+      <Line data={chartData} options={options} />
     </div>
   );
 }

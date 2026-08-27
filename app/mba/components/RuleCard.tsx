@@ -12,29 +12,17 @@ interface RuleCardProps {
   rule: AssociationRule;
 }
 
-function MetricBadge({
-  label,
-  value,
-}: {
-  label: string;
-  value: number;
-}) {
+function MetricBadge({ label, value }: { label: string; value: number }) {
   return (
     <div className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700">
       <span className="opacity-70">{label}</span>
 
-      <span>
-        {label === "Lift"
-          ? value.toFixed(2)
-          : value.toFixed(3)}
-      </span>
+      <span>{label === "Lift" ? value.toFixed(2) : value.toFixed(3)}</span>
     </div>
   );
 }
 
-export default function RuleCard({
-  rule,
-}: RuleCardProps) {
+export default function RuleCard({ rule }: RuleCardProps) {
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
       <div className="flex items-start justify-between gap-4">
@@ -49,9 +37,7 @@ export default function RuleCard({
               </span>
             ))}
 
-            <span className="mx-2 text-lg text-slate-400">
-              →
-            </span>
+            <span className="mx-2 text-lg text-slate-400">→</span>
 
             {rule.consequents.map((item) => (
               <span
@@ -64,29 +50,17 @@ export default function RuleCard({
           </div>
 
           <div className="mt-4 text-sm text-slate-500">
-            <span className="font-semibold text-slate-700">
-              Example:
-            </span>{" "}
-            {rule.antecedents.join(", ")} →{" "}
-            {rule.consequents.join(", ")}
+            <span className="font-semibold text-slate-700">Example:</span>{" "}
+            {rule.antecedents.join(", ")} → {rule.consequents.join(", ")}
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <MetricBadge
-            label="Support"
-            value={rule.support}
-          />
+          <MetricBadge label="Support" value={rule.support} />
 
-          <MetricBadge
-            label="Confidence"
-            value={rule.confidence}
-          />
+          <MetricBadge label="Confidence" value={rule.confidence} />
 
-          <MetricBadge
-            label="Lift"
-            value={rule.lift}
-          />
+          <MetricBadge label="Lift" value={rule.lift} />
         </div>
       </div>
     </div>

@@ -8,11 +8,15 @@ export async function connectDB(): Promise<Db> {
   const dbName = process.env.MONGODB_DB || process.env.MONGODB_NAME;
 
   if (!uri) {
-    throw new Error("Please define MONGODB_URL (or MONGODB_URI) in environment");
+    throw new Error(
+      "Please define MONGODB_URL (or MONGODB_URI) in environment",
+    );
   }
 
   if (!dbName) {
-    throw new Error("Please define MONGODB_DB (or MONGODB_NAME) in environment");
+    throw new Error(
+      "Please define MONGODB_DB (or MONGODB_NAME) in environment",
+    );
   }
 
   if (db) {

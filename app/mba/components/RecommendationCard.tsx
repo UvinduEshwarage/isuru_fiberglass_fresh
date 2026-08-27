@@ -21,9 +21,7 @@ export default function RecommendationCard({
         <Sparkles className="h-5 w-5 text-amber-500" />
       </div>
 
-      <h3 className="mt-5 text-lg font-semibold text-slate-800">
-        {product}
-      </h3>
+      <h3 className="mt-5 text-lg font-semibold text-slate-800">{product}</h3>
 
       <p className="mt-2 text-sm text-slate-500">
         Recommended product based on Market Basket Analysis.
@@ -31,9 +29,7 @@ export default function RecommendationCard({
 
       {confidence !== undefined && (
         <div className="mt-5 flex items-center justify-between">
-          <span className="text-sm text-slate-500">
-            Confidence
-          </span>
+          <span className="text-sm text-slate-500">Confidence</span>
 
           <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
             {(confidence * 100).toFixed(1)}%

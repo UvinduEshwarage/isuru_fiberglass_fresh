@@ -57,9 +57,13 @@ export async function fetchMl<T>(path: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   });
 
-  const payload = await response.json().catch(() => ({ error: "Invalid JSON response from ML service" }));
+  const payload = await response
+    .json()
+    .catch(() => ({ error: "Invalid JSON response from ML service" }));
   if (!response.ok) {
-    throw new Error((payload as any).detail || (payload as any).error || "ML service error");
+    throw new Error(
+      (payload as any).detail || (payload as any).error || "ML service error",
+    );
   }
   return payload as T;
 }

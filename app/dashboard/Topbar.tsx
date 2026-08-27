@@ -51,7 +51,8 @@ export default function Topbar() {
 
   const title = (() => {
     if (pathname === "/dashboard") return "Dashboard";
-    if (pathname.startsWith("/dashboard/revenue-summary")) return "Revenue Summary";
+    if (pathname.startsWith("/dashboard/revenue-summary"))
+      return "Revenue Summary";
     if (pathname.startsWith("/dashboard/sales-trends")) return "Sales Trends";
     if (pathname.startsWith("/billing")) return "Billing";
     if (pathname.startsWith("/products")) return "Products";
@@ -63,62 +64,54 @@ export default function Topbar() {
   })();
 
   return (
-  <header className="flex items-center justify-between rounded-xl bg-white px-4 py-4 shadow-sm border border-slate-500">
-    {/* Left */}
-    <div>
-      <p className="text-sm text-slate-500">
-        Point of Sale System
-      </p>
+    <header className="flex items-center justify-between rounded-xl bg-white px-4 py-4 shadow-sm border border-slate-500">
+      {/* Left */}
+      <div>
+        <p className="text-sm text-slate-500">Point of Sale System</p>
 
-      <h1 className="mt-1 text-2xl font-bold text-slate-800">
-        {title}
-      </h1>
-    </div>
-
-    {/* Right */}
-    <div className="flex items-center gap-5">
-      {/* Date */}
-      <div className="hidden lg:block text-right">
-        <p className="text-sm font-medium text-slate-800">
-          {new Date().toLocaleDateString("en-US", {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </p>
-
-        <p className="text-xs text-slate-500">
-          Welcome back 👋
-        </p>
+        <h1 className="mt-1 text-2xl font-bold text-slate-800">{title}</h1>
       </div>
 
-      {/* Profile */}
-      <Link
-        href="/settings/profile"
-        className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 transition hover:bg-slate-100"
-      >
-        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full ">
-          <Image
-            src="/favicon.ico"
-            alt="Business Logo"
-            width={40}
-            height={35}
-            className="object-contain"
-          />
-        </div>
-
-        <div className="hidden sm:block">
-          <p className="text-sm font-semibold text-slate-800">
-            {profile.name}
+      {/* Right */}
+      <div className="flex items-center gap-5">
+        {/* Date */}
+        <div className="hidden lg:block text-right">
+          <p className="text-sm font-medium text-slate-800">
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
           </p>
 
-          <p className="text-xs text-slate-500">
-            {profile.email}
-          </p>
+          <p className="text-xs text-slate-500">Welcome back 👋</p>
         </div>
-      </Link>
-    </div>
-  </header>
-);
+
+        {/* Profile */}
+        <Link
+          href="/settings/profile"
+          className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 transition hover:bg-slate-100"
+        >
+          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full ">
+            <Image
+              src="/favicon.ico"
+              alt="Business Logo"
+              width={40}
+              height={35}
+              className="object-contain"
+            />
+          </div>
+
+          <div className="hidden sm:block">
+            <p className="text-sm font-semibold text-slate-800">
+              {profile.name}
+            </p>
+
+            <p className="text-xs text-slate-500">{profile.email}</p>
+          </div>
+        </Link>
+      </div>
+    </header>
+  );
 }

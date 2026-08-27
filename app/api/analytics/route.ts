@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
         },
         {
           status: 401,
-        }
+        },
       );
     }
 
@@ -88,20 +88,16 @@ export async function GET(request: NextRequest) {
       const key = `${inv.Year}-${String(inv.Month).padStart(2, "0")}`;
 
       if (!uniqueMonthlyRevenue.has(key)) {
-        uniqueMonthlyRevenue.set(
-          key,
-          Number(inv.MonthlyRevenue) || 0
-        );
+        uniqueMonthlyRevenue.set(key, Number(inv.MonthlyRevenue) || 0);
       }
     });
 
     const totalRevenue = [...uniqueMonthlyRevenue.values()].reduce(
       (sum, value) => sum + value,
-      0
+      0,
     );
 
-    const averageInvoice =
-      invoiceCount > 0 ? totalRevenue / invoiceCount : 0;
+    const averageInvoice = invoiceCount > 0 ? totalRevenue / invoiceCount : 0;
 
     // =====================
     // MONTHLY REVENUE
@@ -109,13 +105,9 @@ export async function GET(request: NextRequest) {
     const monthlyRevenue: Record<string, number> = {};
 
     invoices.forEach((inv: any) => {
-      const monthKey = `${inv.Year}-${String(inv.Month).padStart(
-        2,
-        "0"
-      )}`;
+      const monthKey = `${inv.Year}-${String(inv.Month).padStart(2, "0")}`;
 
-      monthlyRevenue[monthKey] =
-        Number(inv.MonthlyRevenue) || 0;
+      monthlyRevenue[monthKey] = Number(inv.MonthlyRevenue) || 0;
     });
 
     // =====================
@@ -127,8 +119,7 @@ export async function GET(request: NextRequest) {
       const category = inv.ProductCategory;
 
       productRevenue[category] =
-        (productRevenue[category] || 0) +
-        (Number(inv.Quantity) || 0);
+        (productRevenue[category] || 0) + (Number(inv.Quantity) || 0);
     });
 
     const topProducts = Object.entries(productRevenue)
@@ -148,8 +139,7 @@ export async function GET(request: NextRequest) {
       const quarter = inv.Quarter;
 
       quarterRevenue[quarter] =
-        (quarterRevenue[quarter] || 0) +
-        (Number(inv.MonthlyRevenue) || 0);
+        (quarterRevenue[quarter] || 0) + (Number(inv.MonthlyRevenue) || 0);
     });
 
     // =====================
@@ -168,17 +158,15 @@ export async function GET(request: NextRequest) {
     // =====================
     // ML DATA
     // =====================
-    const records: MlTrendRecord[] = Object.entries(
-      monthlyRevenue
-    ).map(([month, revenue]) => ({
-      date: `${month}-01`,
-      revenue,
-    }));
+    const records: MlTrendRecord[] = Object.entries(monthlyRevenue).map(
+      ([month, revenue]) => ({
+        date: `${month}-01`,
+        revenue,
+      }),
+    );
 
     const trendAnalysis =
-      records.length > 0
-        ? await fetchTrendAnalysis(records)
-        : null;
+      records.length > 0 ? await fetchTrendAnalysis(records) : null;
 
     // =====================
     // RESPONSE
@@ -212,7 +200,7 @@ export async function GET(request: NextRequest) {
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }

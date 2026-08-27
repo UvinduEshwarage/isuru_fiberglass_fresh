@@ -11,13 +11,21 @@ type RecommendationPanelProps = {
   error?: string;
 };
 
-export default function RecommendationPanel({ recommendations, rules, loading = false, error = "" }: RecommendationPanelProps) {
+export default function RecommendationPanel({
+  recommendations,
+  rules,
+  loading = false,
+  error = "",
+}: RecommendationPanelProps) {
   return (
     <div className="rounded-3xl bg-white p-6 shadow-sm">
       <div className="mb-5">
-        <h2 className="text-xl font-semibold text-slate-900">Recommendation Output</h2>
+        <h2 className="text-xl font-semibold text-slate-900">
+          Recommendation Output
+        </h2>
         <p className="mt-2 text-sm text-slate-500">
-          Recommended products are derived from association rules whose antecedents match your selected items.
+          Recommended products are derived from association rules whose
+          antecedents match your selected items.
         </p>
       </div>
 
@@ -42,10 +50,15 @@ export default function RecommendationPanel({ recommendations, rules, loading = 
       ) : (
         <div className="space-y-6">
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm uppercase tracking-[0.2em] text-slate-500">Recommendations ({recommendations.length})</div>
+            <div className="text-sm uppercase tracking-[0.2em] text-slate-500">
+              Recommendations ({recommendations.length})
+            </div>
             <ul className="mt-3 space-y-2 text-slate-800">
               {recommendations.map((product, index) => (
-                <li key={product} className="rounded-2xl bg-white px-4 py-3 shadow-sm">
+                <li
+                  key={product}
+                  className="rounded-2xl bg-white px-4 py-3 shadow-sm"
+                >
                   <span className="font-medium">{index + 1}.</span> {product}
                 </li>
               ))}
@@ -53,15 +66,23 @@ export default function RecommendationPanel({ recommendations, rules, loading = 
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm uppercase tracking-[0.2em] text-slate-500">Matched rules ({rules.length})</div>
+            <div className="text-sm uppercase tracking-[0.2em] text-slate-500">
+              Matched rules ({rules.length})
+            </div>
             <div className="mt-4 space-y-4">
               {rules.length === 0 ? (
-                <div className="text-slate-600">No matching rules were found.</div>
+                <div className="text-slate-600">
+                  No matching rules were found.
+                </div>
               ) : (
                 rules.map((rule, index) => (
-                  <div key={index} className="rounded-2xl bg-white p-4 shadow-sm">
+                  <div
+                    key={index}
+                    className="rounded-2xl bg-white p-4 shadow-sm"
+                  >
                     <div className="font-medium text-slate-900">
-                      {rule.antecedents.join(" + ")} → {rule.consequents.join(" + ")}
+                      {rule.antecedents.join(" + ")} →{" "}
+                      {rule.consequents.join(" + ")}
                     </div>
                     <div className="mt-2 grid gap-2 sm:grid-cols-3 text-sm text-slate-600">
                       <div>Support: {rule.support.toFixed(3)}</div>
