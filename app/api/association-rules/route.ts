@@ -3,11 +3,10 @@ import { getMlServiceUrl } from "../../../lib/ml";
 
 export async function GET(request: NextRequest) {
   try {
-    const top =
-      request.nextUrl.searchParams.get("top") ?? "10";
+    const top = request.nextUrl.searchParams.get("top") ?? "10";
 
     const response = await fetch(
-      `${getMlServiceUrl()}/association_rules?top=${top}`
+      `${getMlServiceUrl()}/association_rules?top=${top}`,
     );
 
     if (!response.ok) {
@@ -20,7 +19,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

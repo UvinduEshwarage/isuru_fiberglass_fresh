@@ -55,9 +55,7 @@ function StatCard({ stat }: { stat: KPI }) {
 
       <p className="mt-6 text-sm text-slate-500">{stat.title}</p>
 
-      <h2 className="mt-2 text-3xl font-bold text-slate-900">
-        {stat.value}
-      </h2>
+      <h2 className="mt-2 text-3xl font-bold text-slate-900">{stat.value}</h2>
 
       <p className="mt-2 text-sm text-slate-500">{stat.subtitle}</p>
     </div>
@@ -70,29 +68,29 @@ export default function KPICards() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-  async function loadRules() {
-    try {
-      setLoading(true);
-      setError("");
+    async function loadRules() {
+      try {
+        setLoading(true);
+        setError("");
 
-      const response = await fetch("/api/association-rules?top=50");
+        const response = await fetch("/api/association-rules?top=50");
 
-      const payload = await response.json();
+        const payload = await response.json();
 
-      if (!response.ok) {
-        throw new Error(payload.error || "Failed to fetch association rules");
+        if (!response.ok) {
+          throw new Error(payload.error || "Failed to fetch association rules");
+        }
+
+        setRules(Array.isArray(payload.rules) ? payload.rules : []);
+      } catch (err: any) {
+        setError(err.message || "Unexpected error");
+      } finally {
+        setLoading(false);
       }
-
-      setRules(Array.isArray(payload.rules) ? payload.rules : []);
-    } catch (err: any) {
-      setError(err.message || "Unexpected error");
-    } finally {
-      setLoading(false);
     }
-  }
 
-  loadRules();
-}, []);
+    loadRules();
+  }, []);
 
   const statistics = useMemo(() => {
     if (!rules.length) {
@@ -111,8 +109,7 @@ export default function KPICards() {
     const avgSupport =
       rules.reduce((sum, r) => sum + r.support, 0) / rules.length;
 
-    const avgLift =
-      rules.reduce((sum, r) => sum + r.lift, 0) / rules.length;
+    const avgLift = rules.reduce((sum, r) => sum + r.lift, 0) / rules.length;
 
     const frequency: Record<string, number> = {};
 
@@ -135,34 +132,34 @@ export default function KPICards() {
   }, [rules]);
 
   const cards: KPI[] = [
-  {
-    title: "Association Rules",
-    value: statistics.totalRules.toString(),
-    subtitle: "Rules loaded from ML service",
-    icon: Network,
-  },
-  {
-    title: "Average Confidence",
-    value: `${(statistics.avgConfidence * 100).toFixed(1)}%`,
-    subtitle: "Average of loaded rules",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Average Lift",
-    value: statistics.avgLift.toFixed(2),
-    subtitle: "Average relationship strength",
-    icon: TrendingUp,
-  },
-  {
-    title: "Top Product",
-    value:
-      statistics.topProduct.length > 18
-        ? statistics.topProduct.substring(0, 18) + "..."
-        : statistics.topProduct,
-    subtitle: `Avg Support ${(statistics.avgSupport * 100).toFixed(1)}%`,
-    icon: Package,
-  },
-];
+    {
+      title: "Association Rules",
+      value: statistics.totalRules.toString(),
+      subtitle: "Rules loaded from ML service",
+      icon: Network,
+    },
+    {
+      title: "Average Confidence",
+      value: `${(statistics.avgConfidence * 100).toFixed(1)}%`,
+      subtitle: "Average of loaded rules",
+      icon: ShieldCheck,
+    },
+    {
+      title: "Average Lift",
+      value: statistics.avgLift.toFixed(2),
+      subtitle: "Average relationship strength",
+      icon: TrendingUp,
+    },
+    {
+      title: "Top Product",
+      value:
+        statistics.topProduct.length > 18
+          ? statistics.topProduct.substring(0, 18) + "..."
+          : statistics.topProduct,
+      subtitle: `Avg Support ${(statistics.avgSupport * 100).toFixed(1)}%`,
+      icon: Package,
+    },
+  ];
 
   if (loading) {
     return (
@@ -181,9 +178,7 @@ export default function KPICards() {
         <AlertCircle className="h-6 w-6" />
 
         <div>
-          <h3 className="font-semibold">
-            Unable to load KPI statistics
-          </h3>
+          <h3 className="font-semibold">Unable to load KPI statistics</h3>
 
           <p className="text-sm">{error}</p>
         </div>
@@ -194,10 +189,7 @@ export default function KPICards() {
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => (
-        <StatCard
-          key={card.title}
-          stat={card}
-        />
+        <StatCard key={card.title} stat={card} />
       ))}
     </div>
   );

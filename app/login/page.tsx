@@ -49,7 +49,6 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center p-8 bg-linear-to-b from-blue-300 to-slate-50">
       <main className="w-full max-w-md bg-white rounded-2xl shadow-lg p-12 flex flex-col gap-3">
-
         {/* Company Logo */}
         <div className="flex justify-center mb-2">
           <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-100 shadow-md flex items-center justify-center bg-white">

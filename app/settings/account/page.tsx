@@ -23,10 +23,7 @@ export default function AccountSettingsPage() {
       return;
     }
 
-    if (
-      form.newPassword &&
-      form.newPassword !== form.confirmPassword
-    ) {
+    if (form.newPassword && form.newPassword !== form.confirmPassword) {
       setError("New passwords do not match.");
       return;
     }
@@ -78,11 +75,8 @@ export default function AccountSettingsPage() {
   return (
     <div className="max-w-3xl mx-auto p-8">
       <div className="bg-white rounded-xl shadow border">
-
         <div className="border-b px-6 py-4">
-          <h1 className="text-2xl font-bold">
-            Account Settings
-          </h1>
+          <h1 className="text-2xl font-bold">Account Settings</h1>
 
           <p className="text-gray-500 mt-1">
             Update your login email and password.
@@ -90,7 +84,6 @@ export default function AccountSettingsPage() {
         </div>
 
         <div className="p-6 space-y-6">
-
           {success && (
             <div className="bg-green-100 text-green-700 px-4 py-3 rounded-lg">
               {success}
@@ -104,9 +97,7 @@ export default function AccountSettingsPage() {
           )}
 
           <div>
-            <label className="block mb-2 font-medium">
-              New Email
-            </label>
+            <label className="block mb-2 font-medium">New Email</label>
 
             <input
               type="email"
@@ -123,9 +114,7 @@ export default function AccountSettingsPage() {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium">
-              Current Password
-            </label>
+            <label className="block mb-2 font-medium">Current Password</label>
 
             <input
               type="password"
@@ -141,9 +130,7 @@ export default function AccountSettingsPage() {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium">
-              New Password
-            </label>
+            <label className="block mb-2 font-medium">New Password</label>
 
             <input
               type="password"
@@ -186,7 +173,6 @@ export default function AccountSettingsPage() {
               {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
-
         </div>
       </div>
     </div>

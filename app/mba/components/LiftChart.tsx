@@ -11,13 +11,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 type AssociationRule = {
   antecedents: string[];
@@ -37,16 +31,12 @@ export default function LiftChart() {
       try {
         setLoading(true);
 
-        const response = await fetch(
-          "/api/association-rules?top=20"
-        );
+        const response = await fetch("/api/association-rules?top=20");
 
         const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            result.error || "Failed to fetch association rules"
-          );
+          throw new Error(result.error || "Failed to fetch association rules");
         }
 
         setRules(result.rules ?? []);
@@ -94,12 +84,11 @@ export default function LiftChart() {
             const rule = rules[items[0].dataIndex];
 
             return `${rule.antecedents.join(", ")} → ${rule.consequents.join(
-              ", "
+              ", ",
             )}`;
           },
 
-          label: (item: any) =>
-            `Lift : ${item.raw}`,
+          label: (item: any) => `Lift : ${item.raw}`,
         },
       },
     },
@@ -145,22 +134,17 @@ export default function LiftChart() {
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-slate-800">
-          Lift Analysis
-        </h2>
+        <h2 className="text-xl font-bold text-slate-800">Lift Analysis</h2>
 
         <p className="mt-1 text-sm text-slate-500">
-          Lift measures how much more frequently products are purchased
-          together than expected by chance. Higher lift values indicate
-          stronger associations.
+          Lift measures how much more frequently products are purchased together
+          than expected by chance. Higher lift values indicate stronger
+          associations.
         </p>
       </div>
 
       <div className="h-96">
-        <Bar
-          data={chartData}
-          options={options}
-        />
+        <Bar data={chartData} options={options} />
       </div>
     </div>
   );

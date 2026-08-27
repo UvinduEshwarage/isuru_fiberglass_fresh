@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -87,8 +86,7 @@ const workflow = [
   {
     step: "04",
     title: "Recommendations",
-    description:
-      "Generate product suggestions for future customer purchases.",
+    description: "Generate product suggestions for future customer purchases.",
   },
 ];
 
@@ -103,8 +101,6 @@ export default function MarketBasketDashboard() {
               <BrainCircuit className="mr-2 h-4 w-4 text-slate-300 " />
               Business Intelligence Module
             </div>
-
-            
 
             <p className="mt-5 max-w-2xl text-slate-300 leading-7 px-4 py-2">
               Analyze customer purchasing behaviour using Association Rule
@@ -121,23 +117,23 @@ export default function MarketBasketDashboard() {
           </div>
         </div>
       </section>
+      <div className="mt-6">
+        <ConfidenceChart />
+        <br></br>
+        <LiftChart />
+
         <div className="mt-6">
-          <ConfidenceChart />
-          <br></br>
-          <LiftChart />
+          <MetricGuide />
 
-          <div className="mt-6">
-  <MetricGuide />
-
-  <ProductFrequencyChart />
-</div>
+          <ProductFrequencyChart />
         </div>
+      </div>
 
-<br></br>
+      <br></br>
       {/* KPI Cards */}
-        <section>
-          <KPICards />
-        </section>
+      <section>
+        <KPICards />
+      </section>
 
       {/* Main Modules */}
       <section className="grid gap-6 lg:grid-cols-2 bg-black mt-6">
@@ -166,7 +162,6 @@ export default function MarketBasketDashboard() {
 
               <div className="mt-8 flex items-center font-semibold text-slate-900">
                 Open Module
-
                 <ArrowRight className="ml-2 h-5 w-5 transition group-hover:translate-x-2" />
               </div>
             </Link>

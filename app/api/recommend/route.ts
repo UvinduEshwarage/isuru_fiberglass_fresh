@@ -4,7 +4,10 @@ import { fetchMl } from "../../../lib/ml";
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
   if (!body || typeof body !== "object" || !Array.isArray(body.products)) {
-    return NextResponse.json({ error: "Missing products list" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing products list" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -14,6 +17,9 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 },
+    );
   }
 }

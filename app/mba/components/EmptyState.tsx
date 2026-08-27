@@ -17,13 +17,9 @@ export default function EmptyState({
         <SearchX className="h-12 w-12 text-slate-500" />
       </div>
 
-      <h2 className="mt-6 text-2xl font-bold text-slate-800">
-        {title}
-      </h2>
+      <h2 className="mt-6 text-2xl font-bold text-slate-800">{title}</h2>
 
-      <p className="mt-3 max-w-lg text-slate-500">
-        {description}
-      </p>
+      <p className="mt-3 max-w-lg text-slate-500">{description}</p>
     </div>
   );
 }

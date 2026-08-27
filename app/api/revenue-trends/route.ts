@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   if (!body || !Array.isArray(body.records)) {
     return NextResponse.json(
       { error: "Missing records array" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

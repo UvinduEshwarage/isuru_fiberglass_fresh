@@ -11,13 +11,7 @@ import {
 
 import { Bar } from "react-chartjs-2";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 interface CategoryQuantityItem {
   category: string;
@@ -28,9 +22,7 @@ interface Props {
   data: CategoryQuantityItem[];
 }
 
-export default function CategoryQuantityChart({
-  data,
-}: Props) {
+export default function CategoryQuantityChart({ data }: Props) {
   const chartData = {
     labels: data.map((item) => item.category),
 
@@ -60,8 +52,7 @@ export default function CategoryQuantityChart({
 
       tooltip: {
         callbacks: {
-          label: (context: any) =>
-            `${context.parsed.x.toLocaleString()} units`,
+          label: (context: any) => `${context.parsed.x.toLocaleString()} units`,
         },
       },
     },
@@ -75,10 +66,7 @@ export default function CategoryQuantityChart({
 
   return (
     <div className="h-87.5">
-      <Bar
-        data={chartData}
-        options={options}
-      />
+      <Bar data={chartData} options={options} />
     </div>
   );
 }

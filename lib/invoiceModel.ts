@@ -18,19 +18,14 @@ export interface InvoiceDocument {
   MonthlyRevenue: number;
 }
 
-export function invoiceCollection(
-  db: Db
-): Collection<InvoiceDocument> {
+export function invoiceCollection(db: Db): Collection<InvoiceDocument> {
   return db.collection<InvoiceDocument>("invoices");
 }
 
 export async function ensureInvoiceIndexes(db: Db) {
   const collection = invoiceCollection(db);
 
-  await collection.createIndex(
-    { InvoiceID: 1 },
-    
-  );
+  await collection.createIndex({ InvoiceID: 1 });
 
   await collection.createIndex({
     Year: 1,

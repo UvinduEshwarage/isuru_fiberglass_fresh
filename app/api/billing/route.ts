@@ -78,25 +78,21 @@ export async function POST(request: NextRequest) {
       { status: 401 },
     );
   }
-
   const body = await request.json().catch(() => null);
   const customerName = body?.customerName;
   const items = Array.isArray(body?.items) ? (body.items as any[]) : null;
   const date = body?.date ? new Date(body.date) : new Date();
-
   if (!customerName || !items || items.length === 0) {
     return NextResponse.json(
       { error: "Request must include customerName and an array of items" },
       { status: 400 },
     );
   }
-
   const invoiceTotal = items.reduce((sum, item) => {
     const price = Number(item.price) || 0;
     const quantity = Number(item.quantity) || 1;
     return sum + price * quantity;
   }, 0);
-
   const itemProductIds = items
     .filter((item) => item.productId && typeof item.productId === "string")
     .map((item) => ({
@@ -106,7 +102,6 @@ export async function POST(request: NextRequest) {
 
   const db = await connectDB();
   await ensureProductIndexes(db);
-
   if (itemProductIds.length > 0) {
     const productRows = await productCollection(db)
       .find({
@@ -148,7 +143,6 @@ export async function POST(request: NextRequest) {
       );
     }
   }
-
   const invoice = {
     InvoiceID: generateInvoiceId(),
     customerName,
@@ -157,7 +151,6 @@ export async function POST(request: NextRequest) {
     date: date.toISOString(),
     createdAt: new Date().toISOString(),
   };
-
   await ensureNewInvoiceIndexes(db);
   const result = await newInvoiceCollection(db).insertOne(invoice);
 
@@ -171,7 +164,6 @@ export async function POST(request: NextRequest) {
 
     await productCollection(db).bulkWrite(stockUpdates);
   }
-
   return NextResponse.json(
     { invoice: { ...invoice, _id: result.insertedId.toString() } },
     { status: 201 },

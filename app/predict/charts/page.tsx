@@ -25,8 +25,12 @@ function getQuarter(month: number) {
 }
 
 export default function ForecastChartsPage() {
-  const [monthlyData, setMonthlyData] = useState<TrendResponse["monthly_revenue"]>([]);
-  const [quarterData, setQuarterData] = useState<{ quarter: string; revenue: number }[]>([]);
+  const [monthlyData, setMonthlyData] = useState<
+    TrendResponse["monthly_revenue"]
+  >([]);
+  const [quarterData, setQuarterData] = useState<
+    { quarter: string; revenue: number }[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -54,23 +58,30 @@ export default function ForecastChartsPage() {
         const payload = await response.json();
 
         if (!response.ok) {
-          throw new Error(payload.error || payload.detail || "Failed to load forecast charts");
+          throw new Error(
+            payload.error || payload.detail || "Failed to load forecast charts",
+          );
         }
 
         setMonthlyData(payload.monthly_revenue);
 
         const quarterMap = new Map<string, number>();
-        payload.monthly_revenue.forEach((item: { month: string; revenue: number }) => {
-          const monthIndex = Number(item.month.split("-")[1]);
-          const quarter = getQuarter(monthIndex);
-          quarterMap.set(quarter, (quarterMap.get(quarter) || 0) + item.revenue);
-        });
+        payload.monthly_revenue.forEach(
+          (item: { month: string; revenue: number }) => {
+            const monthIndex = Number(item.month.split("-")[1]);
+            const quarter = getQuarter(monthIndex);
+            quarterMap.set(
+              quarter,
+              (quarterMap.get(quarter) || 0) + item.revenue,
+            );
+          },
+        );
 
         setQuarterData(
           Array.from(quarterMap.entries()).map(([quarter, revenue]) => ({
             quarter,
             revenue,
-          }))
+          })),
         );
       } catch (err: any) {
         setError(err.message || "Unexpected error");
@@ -88,7 +99,8 @@ export default function ForecastChartsPage() {
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Forecast Charts</h1>
           <p className="mt-2 text-slate-500 max-w-2xl">
-            Visualize projected revenue trends using the existing revenue trends endpoint.
+            Visualize projected revenue trends using the existing revenue trends
+            endpoint.
           </p>
         </div>
 
@@ -102,12 +114,15 @@ export default function ForecastChartsPage() {
           <div className="rounded-3xl bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold text-slate-900">Projected Monthly Forecast</h2>
-                
+                <h2 className="text-xl font-semibold text-slate-900">
+                  Projected Monthly Forecast
+                </h2>
               </div>
             </div>
             {loading ? (
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600">Loading chart...</div>
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600">
+                Loading chart...
+              </div>
             ) : (
               <MonthlyRevenueChart data={monthlyData} />
             )}
@@ -116,12 +131,18 @@ export default function ForecastChartsPage() {
           <div className="rounded-3xl bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold text-slate-900">Quarterly Forecast</h2>
-                <p className="text-sm text-slate-500">Calculated from the trend response data.</p>
+                <h2 className="text-xl font-semibold text-slate-900">
+                  Quarterly Forecast
+                </h2>
+                <p className="text-sm text-slate-500">
+                  Calculated from the trend response data.
+                </p>
               </div>
             </div>
             {loading ? (
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600">Loading chart...</div>
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600">
+                Loading chart...
+              </div>
             ) : (
               <QuarterRevenueChart data={quarterData} />
             )}

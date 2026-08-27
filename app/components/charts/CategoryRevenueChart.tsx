@@ -1,19 +1,10 @@
 "use client";
 
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 import { Doughnut } from "react-chartjs-2";
 
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface CategoryRevenueItem {
   category: string;
@@ -24,9 +15,7 @@ interface Props {
   data: CategoryRevenueItem[];
 }
 
-export default function CategoryRevenueChart({
-  data,
-}: Props) {
+export default function CategoryRevenueChart({ data }: Props) {
   const chartData = {
     labels: data.map((item) => item.category),
 
@@ -74,10 +63,7 @@ export default function CategoryRevenueChart({
 
   return (
     <div className="h-[350px]">
-      <Doughnut
-        data={chartData}
-        options={options}
-      />
+      <Doughnut data={chartData} options={options} />
     </div>
   );
 }

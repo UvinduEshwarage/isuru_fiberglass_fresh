@@ -11,13 +11,7 @@ import {
 
 import { Bar } from "react-chartjs-2";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 interface QuarterRevenueItem {
   quarter: string;
@@ -28,9 +22,7 @@ interface Props {
   data: QuarterRevenueItem[];
 }
 
-export default function QuarterRevenueChart({
-  data,
-}: Props) {
+export default function QuarterRevenueChart({ data }: Props) {
   const sortedData = [...data].sort((a, b) => {
     const qA = Number(a.quarter.replace("Q", ""));
     const qB = Number(b.quarter.replace("Q", ""));
@@ -47,12 +39,7 @@ export default function QuarterRevenueChart({
 
         data: sortedData.map((item) => item.revenue),
 
-        backgroundColor: [
-          "#0f766e",
-          "#14b8a6",
-          "#06b6d4",
-          "#3b82f6",
-        ],
+        backgroundColor: ["#0f766e", "#14b8a6", "#06b6d4", "#3b82f6"],
 
         borderRadius: 10,
       },
@@ -71,8 +58,7 @@ export default function QuarterRevenueChart({
 
       tooltip: {
         callbacks: {
-          label: (context: any) =>
-            `$${context.parsed.y.toLocaleString()}`,
+          label: (context: any) => `$${context.parsed.y.toLocaleString()}`,
         },
       },
     },
@@ -82,8 +68,7 @@ export default function QuarterRevenueChart({
         beginAtZero: true,
 
         ticks: {
-          callback: (value: any) =>
-            `$${Number(value).toLocaleString()}`,
+          callback: (value: any) => `$${Number(value).toLocaleString()}`,
         },
       },
     },
@@ -91,10 +76,7 @@ export default function QuarterRevenueChart({
 
   return (
     <div className="h-[350px]">
-      <Bar
-        data={chartData}
-        options={options}
-      />
+      <Bar data={chartData} options={options} />
     </div>
   );
 }

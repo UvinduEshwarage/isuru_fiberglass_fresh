@@ -17,7 +17,7 @@ ChartJS.register(
   BarElement,
   LinearScale,
   Tooltip,
-  Legend
+  Legend,
 );
 
 type AssociationRule = {
@@ -36,16 +36,12 @@ export default function ProductFrequencyChart() {
   useEffect(() => {
     async function loadRules() {
       try {
-        const response = await fetch(
-          "/api/association-rules?top=50"
-        );
+        const response = await fetch("/api/association-rules?top=50");
 
         const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            result.error || "Failed to fetch association rules"
-          );
+          throw new Error(result.error || "Failed to fetch association rules");
         }
 
         setRules(result.rules || []);
@@ -134,10 +130,7 @@ export default function ProductFrequencyChart() {
       </p>
 
       <div className="mt-6 h-96">
-        <Bar
-          data={chartData}
-          options={options}
-        />
+        <Bar data={chartData} options={options} />
       </div>
     </div>
   );

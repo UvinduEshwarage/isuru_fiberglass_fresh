@@ -11,13 +11,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 type AssociationRule = {
   antecedents: string[];
@@ -37,16 +31,12 @@ export default function ConfidenceChart() {
       try {
         setLoading(true);
 
-        const response = await fetch(
-          "/api/association-rules?top=20"
-        );
+        const response = await fetch("/api/association-rules?top=20");
 
         const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            result.error || "Failed to fetch association rules"
-          );
+          throw new Error(result.error || "Failed to fetch association rules");
         }
 
         setRules(result.rules ?? []);
@@ -68,9 +58,7 @@ export default function ConfidenceChart() {
         {
           label: "Confidence",
 
-          data: rules.map((rule) =>
-            Number((rule.confidence * 100).toFixed(2))
-          ),
+          data: rules.map((rule) => Number((rule.confidence * 100).toFixed(2))),
 
           backgroundColor: "#2563eb",
 
@@ -98,12 +86,11 @@ export default function ConfidenceChart() {
             const rule = rules[index];
 
             return `${rule.antecedents.join(", ")} → ${rule.consequents.join(
-              ", "
+              ", ",
             )}`;
           },
 
-          label: (item: any) =>
-            `Confidence : ${item.raw}%`,
+          label: (item: any) => `Confidence : ${item.raw}%`,
         },
       },
     },
@@ -165,10 +152,7 @@ export default function ConfidenceChart() {
       </div>
 
       <div className="h-96">
-        <Bar
-          data={chartData}
-          options={options}
-        />
+        <Bar data={chartData} options={options} />
       </div>
     </div>
   );
