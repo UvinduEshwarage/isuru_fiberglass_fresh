@@ -75,7 +75,7 @@ export default function QuarterRevenueChart({ data }: Props) {
   };
 
   return (
-    <div className="h-[350px]">
+    <div className="h-87.5">
       <Bar data={chartData} options={options} />
     </div>
   );

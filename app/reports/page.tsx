@@ -57,7 +57,7 @@ export default function ReportsPage() {
               className="group rounded-2xl bg-white p-6 shadow-sm border border-slate-200 hover:shadow-lg hover:border-slate-300 transition-all duration-300"
             >
               <div
-                className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${report.color} mb-4`}
+                className={`inline-flex p-3 rounded-lg bg-linear-to-br ${report.color} mb-4`}
               >
                 <Icon className="w-6 h-6 text-white" />
               </div>

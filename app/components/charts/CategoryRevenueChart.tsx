@@ -62,7 +62,7 @@ export default function CategoryRevenueChart({ data }: Props) {
   };
 
   return (
-    <div className="h-[350px]">
+    <div className="h-87.5">
       <Doughnut data={chartData} options={options} />
     </div>
   );
