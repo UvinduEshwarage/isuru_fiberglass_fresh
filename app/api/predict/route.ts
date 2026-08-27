@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   try {
     // const result = await fetchMl("predict", { data: body.data });
     // const result = await fetchMl("predict", body);
-     const result = await fetchMl("predict", body.data);
+    const result = await fetchMl("predict", body.data);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
